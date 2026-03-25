@@ -96,5 +96,9 @@
     "light": "Light",
     "dark": "Dark",
     "system": "System"
+  },
+  "autocomplete": {
+    "noSuggestions": "No suggestions",
+    "clearHistory": "Clear history"
   }
 }

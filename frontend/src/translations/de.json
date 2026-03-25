@@ -96,5 +96,9 @@
     "light": "Hell",
     "dark": "Dunkel",
     "system": "System"
+  },
+  "autocomplete": {
+    "noSuggestions": "Keine Vorschläge",
+    "clearHistory": "Verlauf löschen"
   }
 }
