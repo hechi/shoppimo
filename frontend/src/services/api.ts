@@ -1,0 +1,101 @@
+import { ShoppingList, ListItem, ApiError } from '../types';
+
+// Get API URL from runtime config or build-time env var or fallback
+const getApiUrl = () => {
+  // Try runtime config first (allows post-build configuration)
+  if (typeof window !== 'undefined' && (window as any).APP_CONFIG?.API_URL) {
+    return (window as any).APP_CONFIG.API_URL;
+  }
+  // Fall back to build-time environment variable
+  return (import.meta as any).env?.VITE_API_URL || 'http://localhost:8080';
+};
+
+const API_BASE_URL = `${getApiUrl()}/api`;
+
+class ApiClient {
+  private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
+    const url = `${API_BASE_URL}${endpoint}`;
+
+    const config: RequestInit = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers,
+      },
+      ...options,
+    };
+
+    try {
+      const response = await fetch(url, config);
+
+      if (!response.ok) {
+        await response.text();
+        const error: ApiError = {
+          message: `HTTP ${response.status}: ${response.statusText}`,
+          status: response.status,
+        };
+        throw error;
+      }
+
+      // Handle empty responses (like 204 No Content)
+      if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return undefined as T;
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error instanceof Error) {
+        throw {
+          message: error.message,
+          status: 0,
+        } as ApiError;
+      }
+      throw error;
+    }
+  }
+
+  async createList(): Promise<ShoppingList> {
+    return this.request<ShoppingList>('/lists', {
+      method: 'POST',
+      body: JSON.stringify({}),
+    });
+  }
+
+  async getList(listId: string): Promise<ShoppingList> {
+    return this.request<ShoppingList>(`/lists/${listId}`);
+  }
+
+  async addItem(listId: string, text: string): Promise<ListItem> {
+    return this.request<ListItem>(`/lists/${listId}/items`, {
+      method: 'POST',
+      body: JSON.stringify({ text }),
+    });
+  }
+
+  async updateItem(listId: string, itemId: string, text: string): Promise<ListItem> {
+    return this.request<ListItem>(`/lists/${listId}/items/${itemId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ text }),
+    });
+  }
+
+  async toggleItem(listId: string, itemId: string, completed: boolean): Promise<ListItem> {
+    return this.request<ListItem>(`/lists/${listId}/items/${itemId}`, {
+      method: 'PUT',
+      body: JSON.stringify({ completed }),
+    });
+  }
+
+  async deleteItem(listId: string, itemId: string): Promise<void> {
+    return this.request<void>(`/lists/${listId}/items/${itemId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  async clearCompleted(listId: string): Promise<void> {
+    return this.request<void>(`/lists/${listId}/clear-completed`, {
+      method: 'POST',
+    });
+  }
+}
+
+export const apiClient = new ApiClient();

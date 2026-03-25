@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duplicate Prevention Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .test-step {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+        }
+        .success {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        .warning {
+            border-left-color: #ffc107;
+            background-color: #fff3cd;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .log {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .status {
+            font-weight: bold;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Duplicate Item Prevention Test</h1>
+    
+    <div class="test-container">
+        <h2>Test Instructions</h2>
+        <div class="test-step">
+            <strong>Step 1:</strong> Click "Start Test" to begin the duplicate prevention test
+        </div>
+        <div class="test-step">
+            <strong>Step 2:</strong> The test will create two lists and add items to verify no duplicates occur
+        </div>
+        <div class="test-step">
+            <strong>Step 3:</strong> Check the results below to see if the fix is working
+        </div>
+    </div>
+
+    <div class="test-container">
+        <h2>Test Controls</h2>
+        <button id="startTest" onclick="startTest()">Start Test</button>
+        <button id="clearLog" onclick="clearLog()">Clear Log</button>
+        <button id="openApp" onclick="openApp()">Open App in New Tab</button>
+    </div>
+
+    <div class="test-container">
+        <h2>Test Status</h2>
+        <div id="status" class="status">Ready to test</div>
+        <div id="results"></div>
+    </div>
+
+    <div class="test-container">
+        <h2>Test Log</h2>
+        <div id="log" class="log">Test log will appear here...</div>
+    </div>
+
+    <script>
+        let testLog = [];
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            testLog.push(logEntry);
+            
+            const logElement = document.getElementById('log');
+            logElement.innerHTML = testLog.join('\n');
+            logElement.scrollTop = logElement.scrollHeight;
+            
+            console.log(logEntry);
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusElement = document.getElementById('status');
+            statusElement.textContent = message;
+            statusElement.className = `status ${type}`;
+        }
+        
+        function clearLog() {
+            testLog = [];
+            document.getElementById('log').innerHTML = 'Test log cleared...';
+            document.getElementById('results').innerHTML = '';
+            updateStatus('Ready to test');
+        }
+        
+        function openApp() {
+            window.open('http://localhost:3000', '_blank');
+        }
+        
+        async function apiCall(url, options = {}) {
+            const response = await fetch(`http://localhost:8080${url}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                },
+                ...options
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+            
+            return response.json();
+        }
+        
+        async function startTest() {
+            const startButton = document.getElementById('startTest');
+            startButton.disabled = true;
+            
+            try {
+                updateStatus('Running duplicate prevention test...', 'warning');
+                log('🚀 Starting duplicate prevention test');
+                
+                // Test 1: Create first list and add item
+                log('📝 Test 1: Creating first list');
+                const list1 = await apiCall('/api/lists', { method: 'POST', body: '{}' });
+                log(`✅ Created list 1: ${list1.id}`);
+                
+                log('➕ Adding "apple" to list 1');
+                const item1 = await apiCall(`/api/lists/${list1.id}/items`, {
+                    method: 'POST',
+                    body: JSON.stringify({ text: 'apple' })
+                });
+                log(`✅ Added item to list 1: ${item1.id} - "${item1.text}"`);
+                
+                // Verify list 1 has exactly 1 item
+                const list1Check = await apiCall(`/api/lists/${list1.id}`);
+                log(`🔍 List 1 verification: ${list1Check.items.length} items`);
+                
+                if (list1Check.items.length !== 1) {
+                    throw new Error(`Expected 1 item in list 1, got ${list1Check.items.length}`);
+                }
+                
+                // Test 2: Create second list and add item
+                log('📝 Test 2: Creating second list');
+                const list2 = await apiCall('/api/lists', { method: 'POST', body: '{}' });
+                log(`✅ Created list 2: ${list2.id}`);
+                
+                log('➕ Adding "beer" to list 2');
+                const item2 = await apiCall(`/api/lists/${list2.id}/items`, {
+                    method: 'POST',
+                    body: JSON.stringify({ text: 'beer' })
+                });
+                log(`✅ Added item to list 2: ${item2.id} - "${item2.text}"`);
+                
+                // Wait a bit for any potential duplicate processing
+                log('⏳ Waiting 2 seconds for potential duplicates...');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Verify list 2 has exactly 1 item
+                const list2Check = await apiCall(`/api/lists/${list2.id}`);
+                log(`🔍 List 2 verification: ${list2Check.items.length} items`);
+                
+                if (list2Check.items.length !== 1) {
+                    throw new Error(`Expected 1 item in list 2, got ${list2Check.items.length}`);
+                }
+                
+                // Test 3: Rapid additions to test race conditions
+                log('📝 Test 3: Testing rapid additions');
+                const list3 = await apiCall('/api/lists', { method: 'POST', body: '{}' });
+                log(`✅ Created list 3: ${list3.id}`);
+                
+                // Add multiple items rapidly
+                const rapidItems = ['item1', 'item2', 'item3'];
+                const promises = rapidItems.map(text => 
+                    apiCall(`/api/lists/${list3.id}/items`, {
+                        method: 'POST',
+                        body: JSON.stringify({ text })
+                    })
+                );
+                
+                log('➕ Adding 3 items rapidly...');
+                const addedItems = await Promise.all(promises);
+                log(`✅ Added ${addedItems.length} items rapidly`);
+                
+                // Wait and verify
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                const list3Check = await apiCall(`/api/lists/${list3.id}`);
+                log(`🔍 List 3 verification: ${list3Check.items.length} items`);
+                
+                if (list3Check.items.length !== 3) {
+                    throw new Error(`Expected 3 items in list 3, got ${list3Check.items.length}`);
+                }
+                
+                // All tests passed
+                log('🎉 All tests passed! No duplicate items detected.');
+                updateStatus('✅ Test PASSED - Duplicate prevention is working!', 'success');
+                
+                document.getElementById('results').innerHTML = `
+                    <div class="test-step success">
+                        <strong>✅ Test Results: PASSED</strong><br>
+                        • List 1: 1 item (expected: 1) ✅<br>
+                        • List 2: 1 item (expected: 1) ✅<br>
+                        • List 3: 3 items (expected: 3) ✅<br>
+                        • No duplicate items detected ✅
+                    </div>
+                `;
+                
+            } catch (error) {
+                log(`❌ Test failed: ${error.message}`, 'error');
+                updateStatus('❌ Test FAILED - Check log for details', 'error');
+                
+                document.getElementById('results').innerHTML = `
+                    <div class="test-step error">
+                        <strong>❌ Test Results: FAILED</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            } finally {
+                startButton.disabled = false;
+            }
+        }
+        
+        // Initialize
+        log('🔧 Duplicate Prevention Test Tool Ready');
+        log('📋 This tool tests the fixes for duplicate item issues');
+        log('🌐 Make sure both frontend (localhost:3000) and backend (localhost:8080) are running');
+    </script>
+</body>
+</html>

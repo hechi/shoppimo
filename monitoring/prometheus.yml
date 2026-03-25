@@ -1,0 +1,44 @@
+# Prometheus configuration for monitoring the Shared Shopping List application
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alert_rules.yml"
+
+scrape_configs:
+  # Application metrics
+  - job_name: 'shopping-list-backend'
+    static_configs:
+      - targets: ['backend:8080']
+    metrics_path: '/api/metrics'
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Nginx metrics (if nginx-prometheus-exporter is added)
+  - job_name: 'shopping-list-frontend'
+    static_configs:
+      - targets: ['frontend:9113']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # PostgreSQL metrics (if postgres_exporter is added)
+  - job_name: 'shopping-list-database'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+  # Docker container metrics (if cadvisor is added)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    scrape_interval: 30s
+    scrape_timeout: 10s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093

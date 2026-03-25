@@ -1,0 +1,71 @@
+# Prometheus alert rules for Shared Shopping List application
+
+groups:
+  - name: shopping-list-alerts
+    rules:
+      # Application health alerts
+      - alert: BackendDown
+        expr: up{job="shopping-list-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Shopping List Backend is down"
+          description: "The shopping list backend has been down for more than 1 minute."
+
+      - alert: FrontendDown
+        expr: up{job="shopping-list-frontend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Shopping List Frontend is down"
+          description: "The shopping list frontend has been down for more than 1 minute."
+
+      - alert: DatabaseDown
+        expr: up{job="shopping-list-database"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Shopping List Database is down"
+          description: "The shopping list database has been down for more than 1 minute."
+
+      # Performance alerts
+      - alert: HighMemoryUsage
+        expr: (shopping_list_memory_used / shopping_list_memory_max) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is above 90% for more than 5 minutes."
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is above 2 seconds for more than 5 minutes."
+
+      # Database alerts
+      - alert: DatabaseConnectionsHigh
+        expr: postgres_stat_database_numbackends > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of database connections"
+          description: "Number of database connections is above 80 for more than 5 minutes."
+
+      # Disk space alerts
+      - alert: LowDiskSpace
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) < 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is below 10% for more than 5 minutes."

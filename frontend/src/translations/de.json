@@ -1,0 +1,95 @@
+{
+  "app": {
+    "title": "Geteilte Einkaufsliste",
+    "description": "Erstellen Sie eine neue Einkaufsliste und teilen Sie sie mit anderen für die Zusammenarbeit in Echtzeit."
+  },
+  "buttons": {
+    "createNewList": "Neue Liste erstellen",
+    "creating": "Erstelle...",
+    "tryAgain": "Erneut versuchen",
+    "goHome": "Zur Startseite",
+    "reconnect": "Neu verbinden",
+    "retry": "Wiederholen",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "share": "Teilen",
+    "clearCompleted": "Erledigte löschen",
+    "addItem": "Artikel hinzufügen",
+    "showInstructions": "Anleitung anzeigen",
+    "hideInstructions": "Anleitung ausblenden"
+  },
+  "messages": {
+    "loadingList": "Liste wird geladen...",
+    "invalidList": "Ungültige Liste",
+    "invalidListDescription": "Die Listen-ID fehlt oder ist ungültig.",
+    "errorLoadingList": "Fehler beim Laden der Liste",
+    "listNotFound": "Liste nicht gefunden",
+    "listNotFoundDescription": "Die angeforderte Liste konnte nicht gefunden werden.",
+    "connectionIssue": "Verbindungsproblem",
+    "somethingWentWrong": "Etwas ist schief gelaufen",
+    "workingOffline": "Offline-Modus",
+    "changesWillSync": "Änderungen werden bei Wiederverbindung synchronisiert",
+    "readyToStartShopping": "Bereit zum Einkaufen?",
+    "addFirstItem": "Fügen Sie Ihren ersten Artikel oben hinzu und beginnen Sie mit dem Erstellen Ihrer Einkaufsliste. Sie können sie mit anderen teilen für die Zusammenarbeit in Echtzeit!",
+    "listCleanupNote": "Einkaufslisten werden nach Inaktivitätsphasen automatisch bereinigt, um das System reibungslos am Laufen zu halten.",
+    "itemBeingCreated": "Artikel wird erstellt...",
+    "markAsIncomplete": "Als unvollständig markieren",
+    "markAsComplete": "Als vollständig markieren",
+    "itemCompleted": "Artikel erledigt",
+    "clickToEdit": "Zum Bearbeiten klicken",
+    "confirmDelete": "Löschen bestätigen",
+    "cancelDelete": "Löschen abbrechen",
+    "deleteItem": "Artikel löschen",
+    "linkCopied": "Link in die Zwischenablage kopiert!",
+    "failedToCopyLink": "Fehler beim Kopieren des Links",
+    "shareThisList": "Diese Liste teilen",
+    "listExpiredToday": "Diese Liste läuft heute ab",
+    "listExpiresTomorrow": "Diese Liste läuft morgen ab",
+    "listExpiresInDays": "Diese Liste läuft in {days} Tagen ab"
+  },
+  "instructions": {
+    "howToUse": "So verwenden Sie es:",
+    "step1": "Klicken Sie auf \"Neue Liste erstellen\", um eine neue Einkaufsliste zu starten",
+    "step2": "Fügen Sie Artikel hinzu, indem Sie in das Eingabefeld tippen und Enter drücken",
+    "step3": "Teilen Sie die Seiten-URL mit anderen, um in Echtzeit zusammenzuarbeiten",
+    "step4": "Haken Sie Artikel ab, während Sie einkaufen - alle sehen Updates sofort"
+  },
+  "stats": {
+    "total": "gesamt",
+    "done": "erledigt",
+    "left": "übrig",
+    "complete": "vollständig",
+    "completedItems": "erledigter Artikel",
+    "completedItemsPlural": "erledigte Artikel"
+  },
+  "features": {
+    "realTimeSync": "Echtzeit-Synchronisation",
+    "collaborative": "Kollaborativ",
+    "easySharing": "Einfaches Teilen"
+  },
+  "placeholders": {
+    "addNewItem": "Neuen Artikel hinzufügen...",
+    "enterItemName": "Artikelname eingeben"
+  },
+  "sync": {
+    "connected": "Verbunden",
+    "connecting": "Verbinde...",
+    "disconnected": "Getrennt",
+    "reconnecting": "Verbinde neu...",
+    "synced": "Synchronisiert",
+    "syncing": "Synchronisiere...",
+    "offline": "Offline"
+  },
+  "recentLists": {
+    "title": "Kürzliche Listen",
+    "description": "Ihre kürzlich besuchten Einkaufslisten",
+    "item": "Artikel",
+    "items": "Artikel"
+  },
+  "time": {
+    "justNow": "Gerade eben",
+    "hoursAgo": "vor {hours}h",
+    "yesterday": "Gestern",
+    "daysAgo": "vor {days}d"
+  }
+}

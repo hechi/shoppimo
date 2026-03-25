@@ -1,0 +1,56 @@
+# Production Dockerfile for Kotlin backend with JVM runtime
+FROM gradle:8-jdk17 AS builder
+
+WORKDIR /app
+
+# Copy Gradle wrapper and configuration files
+COPY gradlew gradlew.bat ./
+COPY gradle ./gradle
+COPY build.gradle.kts settings.gradle.kts gradle.properties ./
+
+# Make gradlew executable
+RUN chmod +x ./gradlew
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN ./gradlew build --no-daemon -x test
+
+# Production stage with JRE
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+# Install curl for health checks
+RUN apk add --no-cache curl
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S appgroup && \
+    adduser -S appuser -u 1001 -G appgroup
+
+# Create logs directory
+RUN mkdir -p /app/logs
+
+# Copy built JAR from builder stage (fat JAR with all dependencies)
+COPY --from=builder /app/build/libs/ ./libs/
+RUN cp ./libs/*-all.jar app.jar && rm -rf ./libs/
+
+# Change ownership to non-root user
+RUN chown -R appuser:appgroup /app
+
+# Switch to non-root user
+USER appuser
+
+# Expose port 8080
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8080/api/health || exit 1
+
+# JVM optimization for containers
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+UseG1GC -XX:+UseStringDeduplication"
+
+# Start the application
+CMD ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

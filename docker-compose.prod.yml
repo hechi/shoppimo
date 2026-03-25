@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: shopping-list-db-prod
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-shopping_lists}
+      POSTGRES_USER: ${POSTGRES_USER:-shopping_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-shopping_pass}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-shopping_user} -d ${POSTGRES_DB:-shopping_lists}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    networks:
+      - shopping-network
+
+  backend:
+    image: ghcr.io/hechi/shoppimo/backend:latest
+    container_name: shopping-list-backend-prod
+    ports:
+      - "${BACKEND_PORT:-8080}:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-shopping_lists}
+      DATABASE_USER: ${POSTGRES_USER:-shopping_user}
+      DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-shopping_pass}
+      LIST_RETENTION_DAYS: ${LIST_RETENTION_DAYS:-30}
+      PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - shopping-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  frontend:
+    image: ghcr.io/hechi/shoppimo/frontend:latest
+    container_name: shopping-list-frontend-prod
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    volumes:
+      # Mount runtime configuration file
+      - ./config/frontend-config.js:/usr/share/nginx/html/config.js:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - shopping-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+networks:
+  shopping-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: shopping-list-db
+    environment:
+      POSTGRES_DB: shopping_lists
+      POSTGRES_USER: shopping_user
+      POSTGRES_PASSWORD: shopping_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/src/main/resources/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shopping_user -d shopping_lists"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: shopping-list-backend
+    ports:
+      - "8080:8080"
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/shopping_lists
+      DATABASE_USER: shopping_user
+      DATABASE_PASSWORD: shopping_pass
+      LIST_RETENTION_DAYS: 7
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: ["./gradlew", "run", "--no-daemon"]
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: shopping-list-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://${API_HOST:-localhost}:8080
+      VITE_WS_URL: ws://${API_HOST:-localhost}:8080
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: ["npm", "run", "dev", "--", "--host"]
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
