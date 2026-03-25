@@ -45,3 +45,9 @@ export interface LocalCacheData {
   recentLists: RecentList[];
   version: string;
 }
+
+export interface AutocompleteEntry {
+  text: string;
+  normalizedText: string;
+  lastUsed: number;
+}
