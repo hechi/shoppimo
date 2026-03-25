@@ -91,5 +91,10 @@
     "hoursAgo": "vor {hours}h",
     "yesterday": "Gestern",
     "daysAgo": "vor {days}d"
+  },
+  "theme": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
   }
 }

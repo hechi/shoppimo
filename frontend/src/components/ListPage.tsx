@@ -10,6 +10,7 @@ import ClearCompletedButton from './ClearCompletedButton';
 import SyncStatusIndicator from './SyncStatusIndicator';
 import ConflictNotification from './ConflictNotification';
 import LanguageSwitcher from './LanguageSwitcher';
+import ThemeToggle from './ThemeToggle';
 import ExpirationIndicator from './ExpirationIndicator';
 
 const ListPage = () => {
@@ -68,10 +69,10 @@ const ListPage = () => {
 
   if (!listId) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 mb-4">{t('messages.invalidList')}</h1>
-          <p className="text-gray-600">{t('messages.invalidListDescription')}</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('messages.invalidListDescription')}</p>
         </div>
       </div>
     );
@@ -79,10 +80,10 @@ const ListPage = () => {
 
   if (state.loading.isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('messages.loadingList')}</p>
+          <p className="text-gray-600 dark:text-gray-400">{t('messages.loadingList')}</p>
         </div>
       </div>
     );
@@ -90,15 +91,15 @@ const ListPage = () => {
 
   if (state.loading.error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
           <h1 className="text-2xl font-bold text-red-600 mb-4">{t('messages.errorLoadingList')}</h1>
-          <p className="text-gray-600 mb-6">{state.loading.error}</p>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">{state.loading.error}</p>
           <div className="flex gap-3 justify-center">
             <button
               onClick={() => loadList(listId)}
@@ -120,10 +121,10 @@ const ListPage = () => {
 
   if (!state.list) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-600 mb-4">{t('messages.listNotFound')}</h1>
-          <p className="text-gray-600">{t('messages.listNotFoundDescription')}</p>
+          <h1 className="text-2xl font-bold text-gray-600 dark:text-gray-400 mb-4">{t('messages.listNotFound')}</h1>
+          <p className="text-gray-600 dark:text-gray-400">{t('messages.listNotFoundDescription')}</p>
         </div>
       </div>
     );
@@ -137,7 +138,7 @@ const ListPage = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       {/* Sticky Status Bar - Only shown when disconnected or has pending changes */}
       {showStickyStatus && (
-        <div className="fixed top-0 left-0 right-0 z-30 bg-white shadow-md border-b border-gray-200">
+        <div className="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-gray-800 shadow-md border-b border-gray-200">
           <div className="max-w-2xl mx-auto px-4 py-3">
             <div className="flex items-center justify-between">
               <SyncStatusIndicator 
@@ -157,7 +158,8 @@ const ListPage = () => {
         </div>
       )}
       
-      <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4">
+      <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4 flex items-center gap-2">
+        <ThemeToggle />
         <LanguageSwitcher />
       </div>
       <ConflictNotification
@@ -166,7 +168,7 @@ const ListPage = () => {
         onDismiss={dismissConflictNotification}
       />
       <div className={`max-w-2xl mx-auto py-4 md:py-8 px-3 md:px-4 ${showStickyStatus ? 'pt-20 sm:pt-20' : 'pt-16 sm:pt-8'}`}>
-        <div className="bg-white rounded-xl shadow-lg border border-gray-200/50 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200/50 overflow-hidden">
           {/* Header */}
           <div className="p-4 md:p-6 border-b border-gray-200">
             <div className="flex items-center justify-between mb-6">
@@ -177,7 +179,7 @@ const ListPage = () => {
                   </svg>
                 </div>
                 <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-gray-900">{t('app.title')}</h1>
+                  <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">{t('app.title')}</h1>
                   <SyncStatusIndicator 
                     connectionStatus={connectionStatus} 
                     syncState={syncState} 
@@ -264,8 +266,8 @@ const ListPage = () => {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>
                   </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">{t('messages.readyToStartShopping')}</h3>
-                  <p className="text-gray-600 mb-6 max-w-sm mx-auto">{t('messages.addFirstItem')}</p>
+                  <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">{t('messages.readyToStartShopping')}</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-sm mx-auto">{t('messages.addFirstItem')}</p>
                   <div className="flex items-center justify-center gap-6 text-sm text-gray-500">
                     <div className="flex items-center gap-2">
                       <div className="w-2 h-2 bg-green-400 rounded-full"></div>
@@ -284,19 +286,19 @@ const ListPage = () => {
               ) : (
                 <>
                   {/* List Statistics */}
-                  <div className="flex items-center justify-between mb-6 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center justify-between mb-6 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg">
                     <div className="flex items-center gap-6 text-sm">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                        <span className="text-gray-600" data-testid="stats-total">{state.list?.items?.length || 0} {t('stats.total')}</span>
+                        <span className="text-gray-600 dark:text-gray-400" data-testid="stats-total">{state.list?.items?.length || 0} {t('stats.total')}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-gray-600" data-testid="stats-done">{state.list?.items?.filter(item => item.completed).length || 0} {t('stats.done')}</span>
+                        <span className="text-gray-600 dark:text-gray-400" data-testid="stats-done">{state.list?.items?.filter(item => item.completed).length || 0} {t('stats.done')}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <span className="text-gray-600" data-testid="stats-left">{state.list?.items?.filter(item => !item.completed).length || 0} {t('stats.left')}</span>
+                        <span className="text-gray-600 dark:text-gray-400" data-testid="stats-left">{state.list?.items?.filter(item => !item.completed).length || 0} {t('stats.left')}</span>
                       </div>
                     </div>
                     {state.list?.items?.length > 0 && (

@@ -91,5 +91,10 @@
     "hoursAgo": "{hours}h ago",
     "yesterday": "Yesterday",
     "daysAgo": "{days}d ago"
+  },
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   }
 }
