@@ -5,6 +5,8 @@
 
 A real-time collaborative shopping list app. Create a list, share the link, and everyone sees changes instantly — no account required.
 
+> 🤖 **Built with AI assistance** — This project was created with the help of [Amazon Kiro](https://kiro.dev) and [GitHub Copilot](https://github.com/features/copilot) as a hands-on learning experiment. The idea had been on my mind for a while; AI tools helped me turn it into a real, working project.
+
 ## ✨ Features
 
 - **Real-time sync** — Changes appear instantly for all users via WebSockets
