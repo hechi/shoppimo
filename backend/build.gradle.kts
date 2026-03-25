@@ -31,6 +31,15 @@ repositories {
     mavenCentral()
 }
 
+configurations.all {
+    resolutionStrategy {
+        force("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
+        force("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version")
+        force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
+        force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
+    }
+}
+
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm")
     implementation("io.ktor:ktor-server-websockets-jvm")
@@ -51,6 +60,9 @@ dependencies {
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
     
+    // Push notifications
+    implementation("com.interaso:webpush:1.3.0")
+    
     // Testing
     testImplementation("io.ktor:ktor-server-tests-jvm")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
@@ -59,6 +71,13 @@ dependencies {
     testImplementation("org.testcontainers:postgresql:1.21.3")
     testImplementation("org.testcontainers:junit-jupiter:1.21.3")
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+    kotlinOptions {
+        freeCompilerArgs = freeCompilerArgs + "-Xskip-metadata-version-check"
+    }
 }
 
 tasks.test {
