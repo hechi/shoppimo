@@ -23,11 +23,11 @@ const ExpirationIndicator: React.FC<ExpirationIndicatorProps> = ({ expiresAt }) 
 
   const getIndicatorStyle = () => {
     if (daysUntilExpiration <= 1) {
-      return 'bg-red-50 border-red-200 text-red-800';
+      return 'bg-red-50 dark:bg-red-900/30 border-red-200 dark:border-red-800 text-red-800 dark:text-red-300';
     } else if (daysUntilExpiration <= 3) {
-      return 'bg-orange-50 border-orange-200 text-orange-800';
+      return 'bg-orange-50 dark:bg-orange-900/30 border-orange-200 dark:border-orange-800 text-orange-800 dark:text-orange-300';
     } else {
-      return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+      return 'bg-yellow-50 dark:bg-yellow-900/30 border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300';
     }
   };
 

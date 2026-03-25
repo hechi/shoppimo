@@ -43,10 +43,10 @@ const AddItemForm = () => {
             value={text}
             onChange={handleInputChange}
             placeholder={t('placeholders.addNewItem')}
-            className={`w-full px-4 py-3 md:px-3 md:py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors text-base md:text-sm ${
+            className={`w-full px-4 py-3 md:px-3 md:py-2 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border rounded-md focus:outline-none focus:ring-2 transition-colors text-base md:text-sm ${
               error 
-                ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
-                : 'border-gray-300 focus:ring-blue-500 focus:border-transparent'
+                ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500' 
+                : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-transparent'
             }`}
             disabled={isSubmitting}
             maxLength={500}
@@ -56,7 +56,7 @@ const AddItemForm = () => {
         <button
           type="submit"
           disabled={!text.trim() || isSubmitting}
-          className="px-5 py-3 md:px-4 md:py-2 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:bg-gray-400 text-white font-medium rounded-md transition-colors flex items-center gap-2 text-base md:text-sm"
+          className="px-5 py-3 md:px-4 md:py-2 bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 active:bg-blue-800 dark:active:bg-blue-700 disabled:bg-gray-400 dark:disabled:bg-gray-500 text-white font-medium rounded-md transition-colors flex items-center gap-2 text-base md:text-sm"
           data-testid="add-item-button"
         >
           {isSubmitting && (
@@ -67,12 +67,12 @@ const AddItemForm = () => {
       </form>
       
       {error && (
-        <div className="mt-2 p-2 bg-red-50 border border-red-200 rounded-md">
-          <p className="text-sm text-red-800">{error}</p>
+        <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
+          <p className="text-sm text-red-800 dark:text-red-300">{error}</p>
         </div>
       )}
       
-      <div className="mt-1 text-xs text-gray-500">
+      <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">
         {text.length}/500 characters
       </div>
     </div>

@@ -32,8 +32,8 @@ const ShareButton = ({ listId }: ShareButtonProps) => {
       onClick={handleCopy}
       className={`px-3 py-2 text-sm font-medium rounded-md transition-all flex items-center gap-2 ${
         copied 
-          ? 'bg-green-100 text-green-800 border border-green-200' 
-          : 'bg-blue-600 hover:bg-blue-700 text-white'
+          ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800' 
+          : 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white'
       }`}
     >
       {copied ? (

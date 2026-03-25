@@ -103,10 +103,10 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
     <div 
       className={`flex items-center gap-3 p-4 md:p-3 rounded-lg group transition-all duration-200 ${
         isTemporary
-          ? 'bg-blue-50 border border-blue-200 opacity-75'
+          ? 'bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 opacity-75'
           : item.completed 
-            ? 'bg-green-50 border border-green-200' 
-            : 'bg-gray-50 hover:bg-gray-100 active:bg-gray-100'
+            ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800' 
+            : 'bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-800'
       }`}
       data-testid={`item-${item.id}`}
     >
@@ -116,7 +116,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
         checked={item.completed || false}
         onChange={handleToggle}
         disabled={isTemporary}
-        className={`w-6 h-6 md:w-5 md:h-5 text-blue-600 rounded focus:ring-blue-500 ${
+        className={`w-6 h-6 md:w-5 md:h-5 text-blue-600 dark:text-blue-400 rounded focus:ring-blue-500 ${
           isTemporary ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
         }`}
         title={
@@ -136,12 +136,12 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
               onChange={(e) => setEditText(e.target.value)}
               onBlur={handleSave}
               onKeyDown={handleKeyPress}
-              className="flex-1 px-3 py-2 md:px-2 md:py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
+              className="flex-1 px-3 py-2 md:px-2 md:py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
               autoFocus
               disabled={isUpdating}
             />
             {isUpdating && (
-              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-4 h-4 border-2 border-blue-600 dark:border-blue-500 border-t-transparent rounded-full animate-spin"></div>
             )}
           </div>
         ) : (
@@ -149,10 +149,10 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
             onClick={handleEdit}
             className={`block py-1 transition-colors ${
               isTemporary
-                ? 'text-gray-500 cursor-not-allowed'
+                ? 'text-gray-500 dark:text-gray-500 cursor-not-allowed'
                 : item.completed
-                  ? 'line-through text-gray-500 cursor-pointer'
-                  : 'text-gray-900 hover:text-blue-600 cursor-pointer hover:bg-blue-50 px-2 rounded'
+                  ? 'line-through text-gray-500 dark:text-gray-500 cursor-pointer'
+                  : 'text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-950 px-2 rounded'
             }`}
             title={
               isTemporary 
@@ -171,14 +171,14 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
           <div className="flex items-center gap-1">
             <button
               onClick={handleDeleteConfirm}
-              className="px-3 py-2 md:px-2 md:py-1 bg-red-600 hover:bg-red-700 active:bg-red-800 text-white text-sm md:text-xs rounded transition-colors min-w-[60px] md:min-w-0"
+              className="px-3 py-2 md:px-2 md:py-1 bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 active:bg-red-800 dark:active:bg-red-700 text-white text-sm md:text-xs rounded transition-colors min-w-[60px] md:min-w-0"
               title={t('messages.confirmDelete')}
             >
 {t('buttons.delete')}
             </button>
             <button
               onClick={handleDeleteCancel}
-              className="px-3 py-2 md:px-2 md:py-1 bg-gray-300 hover:bg-gray-400 active:bg-gray-500 text-gray-700 text-sm md:text-xs rounded transition-colors min-w-[60px] md:min-w-0"
+              className="px-3 py-2 md:px-2 md:py-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 active:bg-gray-500 text-gray-700 dark:text-gray-300 text-sm md:text-xs rounded transition-colors min-w-[60px] md:min-w-0"
               title={t('messages.cancelDelete')}
             >
 {t('buttons.cancel')}
@@ -188,7 +188,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
           <button
             onClick={handleDeleteClick}
             disabled={isTemporary}
-            className={`p-2 md:p-1 text-red-600 hover:text-red-800 active:text-red-900 hover:bg-red-50 active:bg-red-100 rounded transition-all ${
+            className={`p-2 md:p-1 text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 active:text-red-900 dark:active:text-red-200 hover:bg-red-50 dark:hover:bg-red-900/30 active:bg-red-100 dark:active:bg-red-900/40 rounded transition-all ${
               isTemporary 
                 ? 'opacity-25 cursor-not-allowed' 
                 : 'opacity-80 hover:opacity-100 active:opacity-100 md:opacity-0 md:group-hover:opacity-100'

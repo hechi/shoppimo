@@ -11,7 +11,7 @@ const LanguageSwitcher: React.FC = () => {
     <div className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors bg-white/80 backdrop-blur-sm shadow-sm"
+        className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors bg-white dark:bg-gray-800/80 backdrop-blur-sm shadow-sm"
         title="Change language"
       >
         <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,7 +33,7 @@ const LanguageSwitcher: React.FC = () => {
           />
           
           {/* Dropdown */}
-          <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg border border-gray-200 z-20 mr-0 sm:mr-0">
+          <div className="absolute right-0 mt-2 w-32 bg-white dark:bg-gray-700 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-20 mr-0 sm:mr-0">
             <div className="py-1">
               {availableLanguages.map((lang) => (
                 <button
@@ -42,10 +42,10 @@ const LanguageSwitcher: React.FC = () => {
                     setLanguage(lang.code);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 transition-colors ${
+                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors ${
                     language === lang.code 
-                      ? 'bg-blue-50 text-blue-700 font-medium' 
-                      : 'text-gray-700'
+                      ? 'bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-400 font-medium' 
+                      : 'text-gray-700 dark:text-gray-300'
                   }`}
                 >
                   {lang.name}
