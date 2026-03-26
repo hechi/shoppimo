@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **CORS preflight failure** — Removed `X-Device-Id` custom header from subscribe/unsubscribe fetch calls; `deviceId` is already in the JSON body, and the custom header was triggering CORS preflight rejections in production
+- Updated tests to assert `X-Device-Id` header is absent from push notification requests
+
+## [6.0.1] - 2026-03-26
+
+### Fixed
+
+- **CORS configuration** — Removed `allowCredentials = true` which is incompatible with `anyHost()`; the CORS spec forbids wildcard origin with credentials, causing Ktor to silently drop all CORS headers
+
+## [6.0.0] - 2026-03-26
+
 ### Added
 
 - **Dark Mode** — Light, dark, and system-preference theme toggle via `ThemeContext` and `ThemeToggle` component; applied across all pages and components
@@ -17,25 +30,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Backend `.env` Auto-Loading** — `EnvLoader.kt` reads `.env` at startup for local development; gracefully falls back to OS env vars in production
 - **PWA Service Worker** — Migrated VitePWA from `generateSW` to `injectManifest` for custom service worker with push event handling
 - **E2E Tests** — Cypress tests for dark mode, autocomplete, and push notification UI flows
-- Documentation for deploying with monitoring stack
-- Comprehensive security and deployment guidelines
-- Version management and changelog maintenance docs
 
 ### Changed
 
 - README updated with dark mode, autocomplete, and push notification features; env vars table and API endpoints table expanded
-- Improved Docker Compose configurations for better environment management
 
 ### Fixed
 
-- **CORS preflight failure** — Removed `X-Device-Id` custom header from subscribe/unsubscribe fetch calls; `deviceId` is already in the JSON body, and the custom header was triggering CORS preflight rejections in production
-- **CORS configuration** — Removed `allowCredentials = true` which is incompatible with `anyHost()` (the CORS spec forbids wildcard origin with credentials)
 - Push notification infinite spinner — Added timeout guard on `navigator.serviceWorker.ready`; added VAPID fast-fail if keys are not configured
 - WebPush API usage — Fixed VAPID key encoding and Web Push library reflection issues
-- Code quality — Removed redundant `eslint-disable` comments; replaced `any` types; extracted i18n strings; deduplicated CSS classes
-- Git tracking cleanup for sensitive environment files
+- Removed redundant `eslint-disable` comments; replaced `any` types; extracted i18n strings; deduplicated CSS classes
 
-## [5.0.0] - 2026-03-24
+## [5.0.0] - 2026-03-25
 
 ### Added
 
@@ -90,5 +96,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/hechi/shoppimo/compare/v5.0.0...HEAD
+[Unreleased]: https://github.com/hechi/shoppimo/compare/v6.0.1...HEAD
+[6.0.1]: https://github.com/hechi/shoppimo/compare/v6.0.0...v6.0.1
+[6.0.0]: https://github.com/hechi/shoppimo/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/hechi/shoppimo/releases/tag/v5.0.0
+
