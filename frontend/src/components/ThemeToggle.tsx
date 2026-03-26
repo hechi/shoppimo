@@ -15,7 +15,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <div 
       data-testid="theme-toggle"
-      className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm dark:bg-gray-700 dark:bg-gray-700/80"
+      className="flex items-center gap-1 sm:gap-2 px-2 py-1.5 sm:px-3 sm:py-2 bg-white/80 backdrop-blur-sm rounded-lg shadow-sm dark:bg-gray-700"
     >
       {themeOptions.map((option) => (
         <button
@@ -27,7 +27,7 @@ const ThemeToggle: React.FC = () => {
               ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-100'
               : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 dark:text-gray-300 dark:hover:text-gray-100 dark:hover:bg-gray-600'
           }`}
-          title={`Switch to ${option.label} theme`}
+          title={t('theme.switchTo', { label: option.label }, `Switch to ${option.label} theme`)}
         >
           {option.label}
         </button>

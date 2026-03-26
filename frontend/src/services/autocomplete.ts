@@ -51,12 +51,13 @@ export class AutocompleteService {
     }
   }
 
-  private isValidEntry(item: any): item is AutocompleteEntry {
+  private isValidEntry(item: unknown): item is AutocompleteEntry {
+    if (typeof item !== 'object' || item === null) return false;
+    const entry = item as Record<string, unknown>;
     return (
-      typeof item === 'object' &&
-      typeof item.text === 'string' &&
-      typeof item.normalizedText === 'string' &&
-      typeof item.lastUsed === 'number'
+      typeof entry.text === 'string' &&
+      typeof entry.normalizedText === 'string' &&
+      typeof entry.lastUsed === 'number'
     );
   }
 

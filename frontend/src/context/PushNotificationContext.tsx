@@ -17,10 +17,12 @@ const PushNotificationContext = createContext<PushNotificationContextType | unde
 const DEVICE_ID_KEY = 'shoppimo_device_id';
 
 const getApiUrl = () => {
-  if (typeof window !== 'undefined' && (window as any).APP_CONFIG?.API_URL) {
-    return (window as any).APP_CONFIG.API_URL;
+  // APP_CONFIG is injected at runtime by nginx/config.js for production deployments
+  if (typeof window !== 'undefined' && (window as any).APP_CONFIG?.API_URL) { // eslint-disable-line @typescript-eslint/no-explicit-any
+    return (window as any).APP_CONFIG.API_URL; // eslint-disable-line @typescript-eslint/no-explicit-any
   }
-  return (import.meta as any).env?.VITE_API_URL || 'http://localhost:8080';
+  // import.meta.env is a Vite-specific object not typed by default; cast required
+  return (import.meta as any).env?.VITE_API_URL || 'http://localhost:8080'; // eslint-disable-line @typescript-eslint/no-explicit-any
 };
 
 const urlBase64ToUint8Array = (base64String: string): Uint8Array<ArrayBuffer> => {

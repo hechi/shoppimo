@@ -45,7 +45,8 @@
     "shareThisList": "Share this list",
     "listExpiredToday": "This list expires today",
     "listExpiresTomorrow": "This list expires tomorrow",
-    "listExpiresInDays": "This list expires in {days} days"
+    "listExpiresInDays": "This list expires in {days} days",
+    "characters": "characters"
   },
   "instructions": {
     "howToUse": "How to use:",
@@ -95,7 +96,8 @@
   "theme": {
     "light": "Light",
     "dark": "Dark",
-    "system": "System"
+    "system": "System",
+    "switchTo": "Switch to {label} theme"
   },
   "autocomplete": {
     "noSuggestions": "No suggestions",

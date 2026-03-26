@@ -45,7 +45,8 @@
     "shareThisList": "Diese Liste teilen",
     "listExpiredToday": "Diese Liste läuft heute ab",
     "listExpiresTomorrow": "Diese Liste läuft morgen ab",
-    "listExpiresInDays": "Diese Liste läuft in {days} Tagen ab"
+    "listExpiresInDays": "Diese Liste läuft in {days} Tagen ab",
+    "characters": "Zeichen"
   },
   "instructions": {
     "howToUse": "So verwenden Sie es:",
@@ -95,7 +96,8 @@
   "theme": {
     "light": "Hell",
     "dark": "Dunkel",
-    "system": "System"
+    "system": "System",
+    "switchTo": "Zu {label} wechseln"
   },
   "autocomplete": {
     "noSuggestions": "Keine Vorschläge",

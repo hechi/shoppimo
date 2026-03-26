@@ -133,7 +133,7 @@ const AddItemForm = () => {
       )}
       
       <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-        {text.length}/500 characters
+        {text.length}/500 {t('messages.characters', {}, 'characters')}
       </div>
     </div>
   );
