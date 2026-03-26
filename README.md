@@ -15,6 +15,9 @@ A real-time collaborative shopping list app. Create a list, share the link, and 
 - **Multi-language** — English and German (i18n ready for more)
 - **Responsive** — Works seamlessly on mobile, tablet, and desktop
 - **Auto-cleanup** — Configurable expiration removes old lists automatically
+- **Dark Mode** — Light, dark, and system-preference theme toggle
+- **Smart Autocomplete** — Suggests items from your cross-list history as you type
+- **Push Notifications** — Opt-in Web Push alerts when list changes happen
 
 ## Tech Stack
 
@@ -110,6 +113,11 @@ Copy `.env.example` to `.env` and adjust the values:
 | `VITE_WS_URL` | `ws://localhost:8080` | WebSocket URL (frontend) |
 | `LIST_RETENTION_DAYS` | `30` | Days before a list expires |
 | `API_HOST` | `localhost` | Host for dev Docker Compose |
+| `VAPID_SUBJECT` | *(required for push)* | Contact URI for VAPID (`mailto:` or `https://`) |
+| `VAPID_PUBLIC_KEY` | *(required for push)* | VAPID public key (EC uncompressed) |
+| `VAPID_PRIVATE_KEY` | *(required for push)* | VAPID private key (PKCS8) |
+
+> 💡 Generate VAPID keys with: `npx web-push generate-vapid-keys`
 
 For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
@@ -125,6 +133,9 @@ For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 | `DELETE` | `/api/lists/{id}/items/{itemId}` | Delete an item |
 | `POST` | `/api/lists/{id}/clear-completed` | Remove completed items |
 | `WS` | `/ws/{listId}` | Real-time WebSocket connection |
+| `GET` | `/api/push/vapid-key` | Get the server's VAPID public key |
+| `POST` | `/api/push/subscribe` | Subscribe to push notifications |
+| `POST` | `/api/push/unsubscribe` | Unsubscribe from push notifications |
 
 ## Contributing
 
