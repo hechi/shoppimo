@@ -18,6 +18,7 @@ A real-time collaborative shopping list app. Create a list, share the link, and 
 - **Dark Mode** — Light, dark, and system-preference theme toggle
 - **Smart Autocomplete** — Suggests items from your cross-list history as you type
 - **Push Notifications** — Opt-in Web Push alerts when list changes happen
+- **Prometheus Metrics** — Application metrics (online users, list count, JVM, HTTP requests) exposed for Prometheus scraping
 
 ## Tech Stack
 
@@ -126,6 +127,7 @@ For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/api/health` | Health check |
+| `GET` | `/api/metrics` | Prometheus metrics |
 | `POST` | `/api/lists` | Create a new list |
 | `GET` | `/api/lists/{id}` | Get a list |
 | `POST` | `/api/lists/{id}/items` | Add an item |

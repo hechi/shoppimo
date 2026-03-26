@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Prometheus application metrics** — Replace JSON `/api/metrics` endpoint with Prometheus exposition format using Ktor MicrometerMetrics plugin; exposes `shoppimo_websocket_connections_total` (active WebSocket connections) and `shoppimo_shopping_lists_total` (total lists in database) alongside JVM and HTTP request metrics
+
 ## [6.1.0] - 2026-03-26
 
 ### Added
