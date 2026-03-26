@@ -117,3 +117,5 @@ export class AutocompleteService {
 }
 
 export const autocompleteService = AutocompleteService.getInstance();
+
+export default autocompleteService;
