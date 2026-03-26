@@ -7,7 +7,7 @@ interface NotificationBellProps {
 }
 
 const NotificationBell = ({ listId }: NotificationBellProps) => {
-  const { permissionStatus, isSubscribed, isLoading, subscribe, unsubscribe, autoSubscribe, setOptedOut, isOptedOut } = useNotifications();
+  const { permissionStatus, isSubscribed, isLoading, subscribe, unsubscribe, autoSubscribe, setOptedOut } = useNotifications();
   const { t } = useI18n();
   const autoSubscribeAttempted = useRef(false);
 
