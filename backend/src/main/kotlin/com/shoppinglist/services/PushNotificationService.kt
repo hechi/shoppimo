@@ -1,6 +1,7 @@
 package com.shoppinglist.services
 
 import com.interaso.webpush.VapidKeys
+import com.interaso.webpush.WebPush
 import com.interaso.webpush.WebPushService
 import com.shoppinglist.repository.PushSubscriptionRepository
 import kotlinx.coroutines.Dispatchers
@@ -82,14 +83,13 @@ class PushNotificationService(
 
             return { endpoint, payload, p256dh, auth ->
                 withContext(Dispatchers.IO) {
-                    val method = WebPushService::class.java.getMethod(
-                        "send",
-                        String::class.java, String::class.java, String::class.java, String::class.java,
-                        Integer::class.java, String::class.java, com.interaso.webpush.WebPush.Urgency::class.java
+                    val state = pushService.send(
+                        payload = payload,
+                        endpoint = endpoint,
+                        p256dh = p256dh,
+                        auth = auth,
                     )
-                    val state = method.invoke(pushService, payload, endpoint, p256dh, auth, null, null, null)
-                        as com.interaso.webpush.WebPush.SubscriptionState
-                    if (state == com.interaso.webpush.WebPush.SubscriptionState.ACTIVE) null else 410
+                    if (state == WebPush.SubscriptionState.ACTIVE) null else 410
                 }
             }
         }

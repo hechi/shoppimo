@@ -31,6 +31,9 @@ services:
       DATABASE_USER: shopping_user
       DATABASE_PASSWORD: shopping_pass
       LIST_RETENTION_DAYS: 7
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy

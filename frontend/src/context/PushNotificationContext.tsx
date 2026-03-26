@@ -73,8 +73,19 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
         headers: { 'Content-Type': 'application/json' },
       });
       const { publicKey } = await vapidResponse.json();
+      if (!publicKey) {
+        throw new Error('Push notifications are not configured on this server.');
+      }
 
-      const registration = await navigator.serviceWorker.ready;
+      if (!('serviceWorker' in navigator)) {
+        throw new Error('Service workers are not supported in this browser');
+      }
+      const registration = await Promise.race([
+        navigator.serviceWorker.ready,
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('Service worker not ready. Use the installed app or a production build for push notifications.')), 8000)
+        ),
+      ]);
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicKey),
@@ -111,10 +122,18 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
     }
   };
 
-  const unsubscribe = async (listId: string): Promise<void> => {
-    setIsLoading(true);
-    try {
-      const registration = await navigator.serviceWorker.ready;
+   const unsubscribe = async (listId: string): Promise<void> => {
+     setIsLoading(true);
+     try {
+       if (!('serviceWorker' in navigator)) {
+         return;
+       }
+       const registration = await Promise.race([
+         navigator.serviceWorker.ready,
+         new Promise<never>((_, reject) =>
+           setTimeout(() => reject(new Error('Service worker not ready.')), 8000)
+         ),
+       ]);
       const subscription = await registration.pushManager.getSubscription();
 
       if (!subscription) {
