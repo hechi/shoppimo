@@ -54,16 +54,26 @@ class PushNotificationService(
     }
 
     private fun buildPayload(changeType: String, listId: UUID, itemText: String?): String {
-        val bodyText = when {
-            itemText != null -> when (changeType) {
-                "ITEM_ADDED" -> "$itemText added"
-                "ITEM_UPDATED" -> "$itemText updated"
-                "ITEM_DELETED" -> "$itemText removed"
-                else -> "List updated"
-            }
+        val title = when (changeType) {
+            "ITEM_ADDED" -> "Item added"
+            "ITEM_CHECKED" -> "Item checked off"
+            "ITEM_UNCHECKED" -> "Item unchecked"
+            "ITEM_UPDATED" -> "Item updated"
+            "ITEM_DELETED" -> "Item removed"
+            "ITEMS_CLEARED" -> "Completed items cleared"
             else -> "List updated"
-        }.take(40)
-        return """{"type":"$changeType","listId":"$listId","title":"List updated","body":"$bodyText","url":"/list/$listId"}"""
+        }
+        val bodyText = when (changeType) {
+            "ITEM_ADDED" -> itemText?.let { "✚ $it" } ?: "New item added"
+            "ITEM_CHECKED" -> itemText?.let { "✓ $it" } ?: "An item was checked off"
+            "ITEM_UNCHECKED" -> itemText?.let { "↩ $it" } ?: "An item was unchecked"
+            "ITEM_UPDATED" -> itemText?.let { "✎ $it" } ?: "An item was edited"
+            "ITEM_DELETED" -> itemText?.let { "✕ $it" } ?: "An item was removed"
+            "ITEMS_CLEARED" -> "All completed items were removed"
+            else -> "The list was updated"
+        }.take(60)
+        val escaped = bodyText.replace("\\", "\\\\").replace("\"", "\\\"")
+        return """{"type":"$changeType","listId":"$listId","title":"$title","body":"$escaped","url":"/list/$listId"}"""
     }
 
     companion object {

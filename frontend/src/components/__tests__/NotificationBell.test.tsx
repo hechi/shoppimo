@@ -10,23 +10,43 @@ vi.mock('../../context/PushNotificationContext', () => ({
 import { useNotifications } from '../../context/PushNotificationContext'
 const mockUseNotifications = useNotifications as any
 
+// Mock global Notification API (component calls Notification.requestPermission() directly)
+const mockGlobalRequestPermission = vi.fn().mockResolvedValue('granted')
+Object.defineProperty(window, 'Notification', {
+  writable: true,
+  value: {
+    permission: 'default',
+    requestPermission: mockGlobalRequestPermission,
+  },
+})
+
 describe('NotificationBell', () => {
   const listId = 'test-list-id'
   const mockRequestPermission = vi.fn()
   const mockSubscribe = vi.fn()
   const mockUnsubscribe = vi.fn()
+  const mockAutoSubscribe = vi.fn()
+  const mockSetOptedOut = vi.fn()
+  const mockIsOptedOut = vi.fn().mockReturnValue(false)
+
+  const defaultMock = {
+    permissionStatus: 'default' as const,
+    isSubscribed: false,
+    isLoading: false,
+    deviceId: 'test-device-id',
+    requestPermission: mockRequestPermission,
+    subscribe: mockSubscribe,
+    unsubscribe: mockUnsubscribe,
+    autoSubscribe: mockAutoSubscribe,
+    setOptedOut: mockSetOptedOut,
+    isOptedOut: mockIsOptedOut,
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
-    mockUseNotifications.mockReturnValue({
-      permissionStatus: 'default',
-      isSubscribed: false,
-      isLoading: false,
-      deviceId: 'test-device-id',
-      requestPermission: mockRequestPermission,
-      subscribe: mockSubscribe,
-      unsubscribe: mockUnsubscribe,
-    })
+    mockIsOptedOut.mockReturnValue(false)
+    mockGlobalRequestPermission.mockResolvedValue('granted')
+    mockUseNotifications.mockReturnValue(defaultMock)
   })
 
   describe('Rendering', () => {
@@ -45,13 +65,9 @@ describe('NotificationBell', () => {
   describe('Visual State: Default (not subscribed, permission default/granted)', () => {
     it('shows outline bell icon when not subscribed and permission is default', () => {
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'default',
         isSubscribed: false,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
 
       render(<NotificationBell listId={listId} />)
@@ -63,13 +79,9 @@ describe('NotificationBell', () => {
 
     it('shows outline bell icon when not subscribed and permission is granted', () => {
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'granted',
         isSubscribed: false,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
 
       render(<NotificationBell listId={listId} />)
@@ -89,13 +101,9 @@ describe('NotificationBell', () => {
   describe('Visual State: Subscribed', () => {
     beforeEach(() => {
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'granted',
         isSubscribed: true,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
     })
 
@@ -125,13 +133,9 @@ describe('NotificationBell', () => {
   describe('Visual State: Permission Denied', () => {
     beforeEach(() => {
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'denied',
         isSubscribed: false,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
     })
 
@@ -160,13 +164,8 @@ describe('NotificationBell', () => {
   describe('Visual State: Loading', () => {
     beforeEach(() => {
       mockUseNotifications.mockReturnValue({
-        permissionStatus: 'default',
-        isSubscribed: false,
+        ...defaultMock,
         isLoading: true,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
     })
 
@@ -187,17 +186,12 @@ describe('NotificationBell', () => {
   describe('Click Behavior: Subscribe Flow', () => {
     it('calls requestPermission and subscribe when clicking unsubscribed button with default permission', async () => {
       const user = userEvent.setup()
-      mockRequestPermission.mockResolvedValue(undefined)
       mockSubscribe.mockResolvedValue(undefined)
 
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'default',
         isSubscribed: false,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
 
       render(<NotificationBell listId={listId} />)
@@ -205,7 +199,8 @@ describe('NotificationBell', () => {
 
       await user.click(button)
 
-      expect(mockRequestPermission).toHaveBeenCalled()
+      expect(mockSetOptedOut).toHaveBeenCalledWith(listId, false)
+      expect(mockGlobalRequestPermission).toHaveBeenCalled()
       expect(mockSubscribe).toHaveBeenCalledWith(listId)
     })
 
@@ -214,13 +209,9 @@ describe('NotificationBell', () => {
       mockSubscribe.mockResolvedValue(undefined)
 
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'granted',
         isSubscribed: false,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
 
       render(<NotificationBell listId={listId} />)
@@ -228,7 +219,8 @@ describe('NotificationBell', () => {
 
       await user.click(button)
 
-      expect(mockRequestPermission).not.toHaveBeenCalled()
+      expect(mockSetOptedOut).toHaveBeenCalledWith(listId, false)
+      expect(mockGlobalRequestPermission).not.toHaveBeenCalled()
       expect(mockSubscribe).toHaveBeenCalledWith(listId)
     })
 
@@ -236,13 +228,9 @@ describe('NotificationBell', () => {
       const user = userEvent.setup()
 
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'denied',
         isSubscribed: false,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
 
       render(<NotificationBell listId={listId} />)
@@ -258,23 +246,21 @@ describe('NotificationBell', () => {
       mockUnsubscribe.mockResolvedValue(undefined)
 
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'granted',
         isSubscribed: true,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
+      
+      mockUnsubscribe.mockResolvedValue(undefined)
 
       render(<NotificationBell listId={listId} />)
       const button = screen.getByTestId('push-subscribe-button')
 
       await user.click(button)
 
+      expect(mockSetOptedOut).toHaveBeenCalledWith(listId, true)
       expect(mockUnsubscribe).toHaveBeenCalledWith(listId)
       expect(mockSubscribe).not.toHaveBeenCalled()
-      expect(mockRequestPermission).not.toHaveBeenCalled()
     })
   })
 
@@ -288,13 +274,9 @@ describe('NotificationBell', () => {
 
     it('uses i18n for tooltip text "Disable notifications"', () => {
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'granted',
         isSubscribed: true,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
 
       render(<NotificationBell listId={listId} />)
@@ -321,13 +303,9 @@ describe('NotificationBell', () => {
       const customListId = 'custom-list-id-12345'
       
       mockUseNotifications.mockReturnValue({
+        ...defaultMock,
         permissionStatus: 'granted',
         isSubscribed: true,
-        isLoading: false,
-        deviceId: 'test-device-id',
-        requestPermission: mockRequestPermission,
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
       })
       
       mockUnsubscribe.mockResolvedValue(undefined)
@@ -337,7 +315,21 @@ describe('NotificationBell', () => {
 
       await user.click(button)
 
+      expect(mockSetOptedOut).toHaveBeenCalledWith(customListId, true)
       expect(mockUnsubscribe).toHaveBeenCalledWith(customListId)
+    })
+  })
+
+  describe('Auto-Subscribe', () => {
+    it('calls autoSubscribe with listId on mount', () => {
+      render(<NotificationBell listId={listId} />)
+      expect(mockAutoSubscribe).toHaveBeenCalledWith(listId)
+    })
+
+    it('calls autoSubscribe only once even on re-render', () => {
+      const { rerender } = render(<NotificationBell listId={listId} />)
+      rerender(<NotificationBell listId={listId} />)
+      expect(mockAutoSubscribe).toHaveBeenCalledTimes(1)
     })
   })
 })

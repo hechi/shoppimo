@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useNotifications } from '../context/PushNotificationContext';
 import { useI18n } from '../context/I18nContext';
 
@@ -6,8 +7,15 @@ interface NotificationBellProps {
 }
 
 const NotificationBell = ({ listId }: NotificationBellProps) => {
-  const { permissionStatus, isSubscribed, isLoading, requestPermission, subscribe, unsubscribe } = useNotifications();
+  const { permissionStatus, isSubscribed, isLoading, subscribe, unsubscribe, autoSubscribe, setOptedOut, isOptedOut } = useNotifications();
   const { t } = useI18n();
+  const autoSubscribeAttempted = useRef(false);
+
+  useEffect(() => {
+    if (autoSubscribeAttempted.current) return;
+    autoSubscribeAttempted.current = true;
+    autoSubscribe(listId);
+  }, [listId, autoSubscribe]);
 
   const handleClick = async () => {
     if (permissionStatus === 'denied') {
@@ -15,10 +23,13 @@ const NotificationBell = ({ listId }: NotificationBellProps) => {
     }
 
     if (isSubscribed) {
+      setOptedOut(listId, true);
       await unsubscribe(listId);
     } else {
+      setOptedOut(listId, false);
       if (permissionStatus !== 'granted') {
-        await requestPermission();
+        const result = await Notification.requestPermission();
+        if (result !== 'granted') return;
       }
       await subscribe(listId);
     }
@@ -82,7 +93,7 @@ const NotificationBell = ({ listId }: NotificationBellProps) => {
           ? 'opacity-50 cursor-not-allowed bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
           : isSubscribed
             ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800 hover:bg-green-200 dark:hover:bg-green-800/50'
-            : 'bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white'
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600 hover:bg-gray-200 dark:hover:bg-gray-600'
       }`}
     >
       {getBellIcon()}

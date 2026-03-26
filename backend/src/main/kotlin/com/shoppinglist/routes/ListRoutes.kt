@@ -274,8 +274,12 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                 }
 
                 val deviceId = call.request.queryParameters["deviceId"]
+                val pushChangeType = when {
+                    request.completed != null -> if (updatedItem.completed) "ITEM_CHECKED" else "ITEM_UNCHECKED"
+                    else -> "ITEM_UPDATED"
+                }
                 call.application.launch(Dispatchers.Default) {
-                    pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_UPDATED", updatedItem.text)
+                    pushNotificationService?.notifyListChange(listId, deviceId, pushChangeType, updatedItem.text)
                 }
 
                 call.respond(HttpStatusCode.OK, updatedItem)
@@ -330,6 +334,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     return@delete
                 }
                 
+                val itemToDelete = itemRepository.getItemById(itemId)
                 val deleted = itemRepository.deleteItem(itemId)
                 if (!deleted) {
                     call.respond(
@@ -353,7 +358,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
 
                 val deviceId = call.request.queryParameters["deviceId"]
                 call.application.launch(Dispatchers.Default) {
-                    pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_DELETED", null)
+                    pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_DELETED", itemToDelete?.text)
                 }
 
                 call.respond(HttpStatusCode.NoContent)

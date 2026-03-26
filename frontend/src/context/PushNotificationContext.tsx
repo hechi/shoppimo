@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
 type PermissionStatus = 'default' | 'granted' | 'denied';
 
@@ -10,11 +10,15 @@ interface PushNotificationContextType {
   requestPermission: () => Promise<void>;
   subscribe: (listId: string) => Promise<void>;
   unsubscribe: (listId: string) => Promise<void>;
+  autoSubscribe: (listId: string) => Promise<void>;
+  setOptedOut: (listId: string, optedOut: boolean) => void;
+  isOptedOut: (listId: string) => boolean;
 }
 
 const PushNotificationContext = createContext<PushNotificationContextType | undefined>(undefined);
 
 const DEVICE_ID_KEY = 'shoppimo_device_id';
+const OPT_OUT_KEY_PREFIX = 'shoppimo_push_optout_';
 
 const getApiUrl = () => {
   // APP_CONFIG is injected at runtime by nginx/config.js for production deployments
@@ -58,6 +62,18 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
   const [isSubscribed, setIsSubscribed] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [deviceId] = useState<string>(() => getOrCreateDeviceId());
+
+  const isOptedOut = useCallback((listId: string): boolean => {
+    return localStorage.getItem(`${OPT_OUT_KEY_PREFIX}${listId}`) === 'true';
+  }, []);
+
+  const setOptedOut = useCallback((listId: string, optedOut: boolean): void => {
+    if (optedOut) {
+      localStorage.setItem(`${OPT_OUT_KEY_PREFIX}${listId}`, 'true');
+    } else {
+      localStorage.removeItem(`${OPT_OUT_KEY_PREFIX}${listId}`);
+    }
+  }, []);
 
   const requestPermission = async (): Promise<void> => {
     const result = await Notification.requestPermission();
@@ -123,6 +139,22 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
     }
   };
 
+  const autoSubscribe = async (listId: string): Promise<void> => {
+    if (isSubscribed || isLoading || isOptedOut(listId) || permissionStatus === 'denied') {
+      return;
+    }
+
+    if (permissionStatus === 'default') {
+      const result = await Notification.requestPermission();
+      setPermissionStatus(result as PermissionStatus);
+      if (result !== 'granted') {
+        return;
+      }
+    }
+
+    await subscribe(listId);
+  };
+
    const unsubscribe = async (listId: string): Promise<void> => {
      setIsLoading(true);
      try {
@@ -169,6 +201,9 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
     requestPermission,
     subscribe,
     unsubscribe,
+    autoSubscribe,
+    setOptedOut,
+    isOptedOut,
   };
 
   return (
