@@ -7,10 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.1.0] - 2026-03-26
+
+### Added
+
+- **Detailed push notifications** — Replace generic "List updated" message with action-specific notifications: item added (✚), checked (✓), unchecked (↩), edited (✎), deleted (✕), and completed items cleared
+- **Auto-subscribe with opt-out** — Users are automatically subscribed to push notifications when opening a list; per-list opt-out toggle persisted in localStorage
+
 ### Fixed
 
-- **CORS preflight failure** — Removed `X-Device-Id` custom header from subscribe/unsubscribe fetch calls; `deviceId` is already in the JSON body, and the custom header was triggering CORS preflight rejections in production
-- Updated tests to assert `X-Device-Id` header is absent from push notification requests
+- **Push notification delivery** — Fix Base64 encoding mismatch between frontend (`btoa()` standard Base64) and backend (`Base64.getUrlDecoder()` URL-safe Base64) that silently broke push delivery
+- **CORS preflight failure** — Pass `deviceId` as query parameter instead of `X-Device-Id` custom header to avoid CORS preflight rejections in production
 
 ## [6.0.1] - 2026-03-26
 
@@ -96,7 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/hechi/shoppimo/compare/v6.0.1...HEAD
+[Unreleased]: https://github.com/hechi/shoppimo/compare/v6.1.0...HEAD
+[6.1.0]: https://github.com/hechi/shoppimo/compare/v6.0.2...v6.1.0
 [6.0.1]: https://github.com/hechi/shoppimo/compare/v6.0.0...v6.0.1
 [6.0.0]: https://github.com/hechi/shoppimo/compare/v5.0.0...v6.0.0
 [5.0.0]: https://github.com/hechi/shoppimo/releases/tag/v5.0.0
