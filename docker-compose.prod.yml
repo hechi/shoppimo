@@ -34,6 +34,9 @@ services:
       DATABASE_PASSWORD: ${POSTGRES_PASSWORD:-shopping_pass}
       LIST_RETENTION_DAYS: ${LIST_RETENTION_DAYS:-30}
       PORT: 8080
+      VAPID_SUBJECT: ${VAPID_SUBJECT:-}
+      VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
+      VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
     depends_on:
       postgres:
         condition: service_healthy

@@ -12,7 +12,6 @@ fun Application.configureCORS() {
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
         allowHeader(HttpHeaders.ContentType)
-        allowCredentials = true
-        anyHost() // For development - should be restricted in production
+        anyHost()
     }
 }
