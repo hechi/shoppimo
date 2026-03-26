@@ -4,6 +4,7 @@ import com.interaso.webpush.VapidKeys
 import com.interaso.webpush.WebPush
 import com.interaso.webpush.WebPushService
 import com.shoppinglist.repository.PushSubscriptionRepository
+import com.shoppinglist.util.getEnv
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -67,9 +68,9 @@ class PushNotificationService(
 
     companion object {
         fun fromEnvironment(repository: PushSubscriptionRepository): PushNotificationService {
-            val subject = System.getenv("VAPID_SUBJECT") ?: error("VAPID_SUBJECT not set")
-            val publicKey = System.getenv("VAPID_PUBLIC_KEY") ?: error("VAPID_PUBLIC_KEY not set")
-            val privateKey = System.getenv("VAPID_PRIVATE_KEY") ?: error("VAPID_PRIVATE_KEY not set")
+            val subject = getEnv("VAPID_SUBJECT") ?: error("VAPID_SUBJECT not set")
+            val publicKey = getEnv("VAPID_PUBLIC_KEY") ?: error("VAPID_PUBLIC_KEY not set")
+            val privateKey = getEnv("VAPID_PRIVATE_KEY") ?: error("VAPID_PRIVATE_KEY not set")
             return PushNotificationService(repository, subject, publicKey, privateKey)
         }
 

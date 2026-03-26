@@ -8,6 +8,7 @@ import com.shoppinglist.database.DatabaseFactory
 import com.shoppinglist.repository.PushSubscriptionRepositoryImpl
 import com.shoppinglist.service.CleanupService
 import com.shoppinglist.services.PushNotificationService
+import com.shoppinglist.util.loadDotEnv
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -15,6 +16,7 @@ fun main() {
 }
 
 fun Application.module() {
+    loadDotEnv()
     DatabaseFactory.init()
     configureSerialization()
     configureCORS()

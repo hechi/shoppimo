@@ -1,6 +1,7 @@
 package com.shoppinglist.routes
 
 import com.shoppinglist.repository.PushSubscriptionRepository
+import com.shoppinglist.util.getEnv
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -36,7 +37,7 @@ data class UnsubscribeResponse(val unsubscribed: Boolean)
 fun Route.pushRoutes(pushRepository: PushSubscriptionRepository) {
     route("/push") {
         get("/vapid-key") {
-            val publicKey = System.getenv("VAPID_PUBLIC_KEY") ?: ""
+            val publicKey = getEnv("VAPID_PUBLIC_KEY") ?: ""
             call.respond(HttpStatusCode.OK, VapidKeyResponse(publicKey))
         }
 
