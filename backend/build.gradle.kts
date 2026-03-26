@@ -57,6 +57,10 @@ dependencies {
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
     implementation("org.postgresql:postgresql:$postgresql_version")
     
+    // Metrics
+    implementation("io.ktor:ktor-server-metrics-micrometer")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.11.0")
+    
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
     
