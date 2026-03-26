@@ -9,16 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Dark Mode** — Light, dark, and system-preference theme toggle via `ThemeContext` and `ThemeToggle` component; applied across all pages and components
+- **Smart Autocomplete** — `AutocompleteService` tracks item history cross-list; `AutocompleteDropdown` integrated into `AddItemForm` with keyboard navigation
+- **Push Notifications** — Web Push opt-in via `PushNotificationContext` and `NotificationBell`; backend push subscription endpoints (`/api/push/subscribe`, `/api/push/unsubscribe`, `/api/push/vapid-key`) with VAPID signing; notifications triggered on list item changes
+- **Push Subscription Storage** — New `PushSubscriptions` database table and repository in Kotlin backend
+- **VAPID Key Support** — `PushNotificationService` with VAPID key configuration; VAPID env vars documented in `.env.example` and wired into Docker Compose files
+- **Backend `.env` Auto-Loading** — `EnvLoader.kt` reads `.env` at startup for local development; gracefully falls back to OS env vars in production
+- **PWA Service Worker** — Migrated VitePWA from `generateSW` to `injectManifest` for custom service worker with push event handling
+- **E2E Tests** — Cypress tests for dark mode, autocomplete, and push notification UI flows
 - Documentation for deploying with monitoring stack
 - Comprehensive security and deployment guidelines
 - Version management and changelog maintenance docs
 
 ### Changed
 
+- README updated with dark mode, autocomplete, and push notification features; env vars table and API endpoints table expanded
 - Improved Docker Compose configurations for better environment management
 
 ### Fixed
 
+- **CORS preflight failure** — Removed `X-Device-Id` custom header from subscribe/unsubscribe fetch calls; `deviceId` is already in the JSON body, and the custom header was triggering CORS preflight rejections in production
+- **CORS configuration** — Removed `allowCredentials = true` which is incompatible with `anyHost()` (the CORS spec forbids wildcard origin with credentials)
+- Push notification infinite spinner — Added timeout guard on `navigator.serviceWorker.ready`; added VAPID fast-fail if keys are not configured
+- WebPush API usage — Fixed VAPID key encoding and Web Push library reflection issues
+- Code quality — Removed redundant `eslint-disable` comments; replaced `any` types; extracted i18n strings; deduplicated CSS classes
 - Git tracking cleanup for sensitive environment files
 
 ## [5.0.0] - 2026-03-24
