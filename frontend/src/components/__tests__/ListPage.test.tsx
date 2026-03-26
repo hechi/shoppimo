@@ -51,6 +51,7 @@ vi.mock('../ConflictNotification', () => ({ default: () => <div /> }));
 vi.mock('../LanguageSwitcher', () => ({ default: () => <div /> }));
 vi.mock('../ThemeToggle', () => ({ default: () => <div /> }));
 vi.mock('../ExpirationIndicator', () => ({ default: () => <div /> }));
+vi.mock('../NotificationBell', () => ({ default: () => <div /> }));
 
 describe('ListPage', () => {
   it('has dark mode classes applied', () => {

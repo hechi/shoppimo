@@ -6,6 +6,7 @@ import { useLocalCache } from '../context/LocalCacheContext';
 import AddItemForm from './AddItemForm';
 import ListItem from './ListItem';
 import ShareButton from './ShareButton';
+import NotificationBell from './NotificationBell';
 import ClearCompletedButton from './ClearCompletedButton';
 import SyncStatusIndicator from './SyncStatusIndicator';
 import ConflictNotification from './ConflictNotification';
@@ -186,7 +187,10 @@ const ListPage = () => {
                   />
                 </div>
               </div>
-              <ShareButton listId={listId} />
+              <div className="flex items-center gap-2">
+                <NotificationBell listId={listId} />
+                <ShareButton listId={listId} />
+              </div>
             </div>
 
             <AddItemForm />

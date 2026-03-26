@@ -100,5 +100,11 @@
   "autocomplete": {
     "noSuggestions": "Keine Vorschläge",
     "clearHistory": "Verlauf löschen"
+  },
+  "notifications": {
+    "enable": "Benachrichtigungen aktivieren",
+    "enabled": "Benachrichtigungen aktiviert",
+    "blocked": "Benachrichtigungen im Browser blockiert",
+    "disable": "Benachrichtigungen deaktivieren"
   }
 }

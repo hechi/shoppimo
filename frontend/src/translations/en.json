@@ -100,5 +100,11 @@
   "autocomplete": {
     "noSuggestions": "No suggestions",
     "clearHistory": "Clear history"
+  },
+  "notifications": {
+    "enable": "Enable notifications",
+    "enabled": "Notifications enabled",
+    "blocked": "Notifications blocked in browser",
+    "disable": "Disable notifications"
   }
 }
