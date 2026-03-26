@@ -9,6 +9,9 @@ import com.shoppinglist.models.*
 import com.shoppinglist.repository.ListRepositoryImpl
 import com.shoppinglist.repository.ItemRepositoryImpl
 import com.shoppinglist.plugins.WebSocketServiceKey
+import com.shoppinglist.services.PushNotificationService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.util.*
@@ -22,7 +25,7 @@ data class ErrorResponse(
 @Serializable
 data class ClearCompletedResponse(val deletedCount: Int)
 
-fun Route.listRoutes() {
+fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
     val listRepository = ListRepositoryImpl()
     val itemRepository = ItemRepositoryImpl()
     val json = Json { ignoreUnknownKeys = true }
@@ -166,7 +169,12 @@ fun Route.listRoutes() {
                 } catch (e: Exception) {
                     println("Error broadcasting item addition: ${e.message}")
                 }
-                
+
+                val deviceId = call.request.header("X-Device-Id")
+                call.application.launch(Dispatchers.Default) {
+                    pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_ADDED", newItem.text)
+                }
+
                 call.respond(HttpStatusCode.Created, newItem)
             } catch (e: Exception) {
                 call.respond(
@@ -264,7 +272,12 @@ fun Route.listRoutes() {
                 } catch (e: Exception) {
                     println("Error broadcasting item update: ${e.message}")
                 }
-                
+
+                val deviceId = call.request.header("X-Device-Id")
+                call.application.launch(Dispatchers.Default) {
+                    pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_UPDATED", updatedItem.text)
+                }
+
                 call.respond(HttpStatusCode.OK, updatedItem)
             } catch (e: Exception) {
                 call.respond(
@@ -337,7 +350,12 @@ fun Route.listRoutes() {
                 } catch (e: Exception) {
                     println("Error broadcasting item deletion: ${e.message}")
                 }
-                
+
+                val deviceId = call.request.header("X-Device-Id")
+                call.application.launch(Dispatchers.Default) {
+                    pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_DELETED", null)
+                }
+
                 call.respond(HttpStatusCode.NoContent)
             } catch (e: Exception) {
                 call.respond(
@@ -390,7 +408,12 @@ fun Route.listRoutes() {
                 } catch (e: Exception) {
                     println("Error broadcasting items cleared: ${e.message}")
                 }
-                
+
+                val deviceId = call.request.header("X-Device-Id")
+                call.application.launch(Dispatchers.Default) {
+                    pushNotificationService?.notifyListChange(listId, deviceId, "ITEMS_CLEARED", null)
+                }
+
                 call.respond(HttpStatusCode.OK, ClearCompletedResponse(deletedCount))
             } catch (e: Exception) {
                 call.respond(

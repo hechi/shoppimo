@@ -5,12 +5,18 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import com.shoppinglist.routes.listRoutes
+import com.shoppinglist.routes.pushRoutes
 import com.shoppinglist.models.HealthResponse
 import com.shoppinglist.models.ErrorResponse
 import com.shoppinglist.models.MetricsResponse
 import com.shoppinglist.models.MemoryInfo
+import com.shoppinglist.repository.PushSubscriptionRepository
+import com.shoppinglist.services.PushNotificationService
 
-fun Application.configureRouting() {
+fun Application.configureRouting(
+    pushRepository: PushSubscriptionRepository? = null,
+    pushNotificationService: PushNotificationService? = null
+) {
     routing {
         get("/") {
             call.respondText("Shared Shopping List API")
@@ -18,9 +24,7 @@ fun Application.configureRouting() {
         
         route("/api") {
             get("/health") {
-                // Enhanced health check with database connectivity
                 try {
-                    // Simple database connectivity check
                     val dbStatus = try {
                         com.shoppinglist.database.DatabaseFactory.testConnection()
                         "healthy"
@@ -48,7 +52,6 @@ fun Application.configureRouting() {
             }
             
             get("/metrics") {
-                // Basic metrics endpoint for monitoring
                 try {
                     val runtime = Runtime.getRuntime()
                     val memoryInfo = MemoryInfo(
@@ -83,7 +86,10 @@ fun Application.configureRouting() {
                 }
             }
             
-            listRoutes()
+            if (pushRepository != null) {
+                pushRoutes(pushRepository)
+            }
+            listRoutes(pushNotificationService)
         }
     }
 }

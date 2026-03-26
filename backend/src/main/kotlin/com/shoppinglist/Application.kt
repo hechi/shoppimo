@@ -5,7 +5,9 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import com.shoppinglist.plugins.*
 import com.shoppinglist.database.DatabaseFactory
+import com.shoppinglist.repository.PushSubscriptionRepositoryImpl
 import com.shoppinglist.service.CleanupService
+import com.shoppinglist.services.PushNotificationService
 
 fun main() {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
@@ -16,14 +18,21 @@ fun Application.module() {
     DatabaseFactory.init()
     configureSerialization()
     configureCORS()
-    configureRouting()
+
+    val pushRepository = PushSubscriptionRepositoryImpl()
+    val pushService = runCatching {
+        PushNotificationService.fromEnvironment(pushRepository)
+    }.getOrNull()
+
+    configureRouting(
+        pushRepository = pushRepository,
+        pushNotificationService = pushService
+    )
     configureWebSockets()
     
-    // Start the cleanup service
     val cleanupService = CleanupService()
     cleanupService.startCleanupScheduler()
     
-    // Stop cleanup service when application stops
     environment.monitor.subscribe(ApplicationStopped) {
         cleanupService.stopCleanupScheduler()
     }
