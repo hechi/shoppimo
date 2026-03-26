@@ -105,7 +105,6 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Device-Id': deviceId,
         },
         body: JSON.stringify({
           listId,
@@ -147,7 +146,6 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'X-Device-Id': deviceId,
         },
         body: JSON.stringify({
           listId,

@@ -259,7 +259,7 @@ describe('PushNotificationContext', () => {
     );
   });
 
-  it('should call POST /api/push/subscribe with body and X-Device-Id header', async () => {
+  it('should call POST /api/push/subscribe with body containing deviceId and no X-Device-Id header', async () => {
     localStorage.setItem('shoppimo_device_id', 'my-device-uuid');
 
     render(
@@ -281,7 +281,7 @@ describe('PushNotificationContext', () => {
     expect(options.method).toBe('POST');
 
     const headers = options.headers as Record<string, string>;
-    expect(headers['X-Device-Id']).toBe('my-device-uuid');
+    expect(headers['X-Device-Id']).toBeUndefined();
 
     const body = JSON.parse(options.body as string);
     expect(body.listId).toBe('list-123');
@@ -357,7 +357,7 @@ describe('PushNotificationContext', () => {
     expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
   });
 
-  it('should call POST /api/push/unsubscribe with body and X-Device-Id header', async () => {
+  it('should call POST /api/push/unsubscribe with body and no X-Device-Id header', async () => {
     localStorage.setItem('shoppimo_device_id', 'my-device-uuid');
 
     render(
@@ -379,7 +379,7 @@ describe('PushNotificationContext', () => {
     expect(options.method).toBe('POST');
 
     const headers = options.headers as Record<string, string>;
-    expect(headers['X-Device-Id']).toBe('my-device-uuid');
+    expect(headers['X-Device-Id']).toBeUndefined();
 
     const body = JSON.parse(options.body as string);
     expect(body.listId).toBe('list-123');
