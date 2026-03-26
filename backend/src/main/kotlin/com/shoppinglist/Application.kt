@@ -20,6 +20,7 @@ fun Application.module() {
     DatabaseFactory.init()
     configureSerialization()
     configureCORS()
+    configureMetrics()
 
     val pushRepository = PushSubscriptionRepositoryImpl()
     val pushService = runCatching {
