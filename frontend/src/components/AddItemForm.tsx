@@ -29,8 +29,9 @@ const AddItemForm = () => {
       autocompleteService.addItem(trimmedText);
       setText('');
       setShowDropdown(false);
-    } catch (error: any) {
-      setError(error.message || 'Failed to add item');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to add item';
+      setError(message);
       console.error('Failed to add item:', error);
     } finally {
       setIsSubmitting(false);
@@ -85,7 +86,7 @@ const AddItemForm = () => {
   return (
     <div>
       <form onSubmit={handleSubmit} className="flex gap-2">
-        <div className="flex-1 relative">
+        <div className="flex-1 relative" onMouseDown={handleInputMouseDown}>
           <input
             ref={inputRef}
             type="text"

@@ -18,6 +18,7 @@ const AutocompleteDropdown: React.FC<Props> = ({
   const [activeIndex, setActiveIndex] = useState<number>(-1);
 
   if (!visible) return null;
+  if (suggestions.length === 0) return null;
 
   const displaySuggestions = suggestions.slice(0, 8);
 

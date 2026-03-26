@@ -58,8 +58,8 @@ describe('AutocompleteDropdown', () => {
 
     it('shows no suggestions when list is empty', () => {
       render(<AutocompleteDropdown {...defaultProps} suggestions={[]} />)
-      const dropdown = screen.getByTestId('autocomplete-dropdown')
-      expect(dropdown).toBeInTheDocument()
+      const dropdown = screen.queryByTestId('autocomplete-dropdown')
+      expect(dropdown).not.toBeInTheDocument()
       expect(screen.queryAllByTestId('autocomplete-suggestion')).toHaveLength(0)
     })
 

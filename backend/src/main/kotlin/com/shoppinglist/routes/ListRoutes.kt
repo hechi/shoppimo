@@ -167,7 +167,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                         service.getMessageBroadcaster().broadcastItemAdded(listId.toString(), itemJson)
                     }
                 } catch (e: Exception) {
-                    println("Error broadcasting item addition: ${e.message}")
+                    call.application.log.warn("Error broadcasting item addition: ${e.message}")
                 }
 
                 val deviceId = call.request.header("X-Device-Id")
@@ -270,7 +270,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                         service.getMessageBroadcaster().broadcastItemUpdated(listId.toString(), itemJson)
                     }
                 } catch (e: Exception) {
-                    println("Error broadcasting item update: ${e.message}")
+                    call.application.log.warn("Error broadcasting item update: ${e.message}")
                 }
 
                 val deviceId = call.request.header("X-Device-Id")
@@ -348,7 +348,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                         service.getMessageBroadcaster().broadcastItemDeleted(listId.toString(), itemId.toString())
                     }
                 } catch (e: Exception) {
-                    println("Error broadcasting item deletion: ${e.message}")
+                    call.application.log.warn("Error broadcasting item deletion: ${e.message}")
                 }
 
                 val deviceId = call.request.header("X-Device-Id")
@@ -406,7 +406,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                         service.getMessageBroadcaster().broadcastItemsCleared(listId.toString(), deletedCount)
                     }
                 } catch (e: Exception) {
-                    println("Error broadcasting items cleared: ${e.message}")
+                    call.application.log.warn("Error broadcasting items cleared: ${e.message}")
                 }
 
                 val deviceId = call.request.header("X-Device-Id")
