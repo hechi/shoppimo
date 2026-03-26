@@ -13,6 +13,10 @@ const getApiUrl = () => {
 const API_BASE_URL = `${getApiUrl()}/api`;
 
 class ApiClient {
+  private getDeviceId(): string | null {
+    return localStorage.getItem('shoppimo_device_id');
+  }
+
   private async request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const url = `${API_BASE_URL}${endpoint}`;
 
@@ -64,35 +68,44 @@ class ApiClient {
     return this.request<ShoppingList>(`/lists/${listId}`);
   }
 
+  private withDeviceId(endpoint: string): string {
+    const deviceId = this.getDeviceId();
+    if (deviceId) {
+      const separator = endpoint.includes('?') ? '&' : '?';
+      return `${endpoint}${separator}deviceId=${encodeURIComponent(deviceId)}`;
+    }
+    return endpoint;
+  }
+
   async addItem(listId: string, text: string): Promise<ListItem> {
-    return this.request<ListItem>(`/lists/${listId}/items`, {
+    return this.request<ListItem>(this.withDeviceId(`/lists/${listId}/items`), {
       method: 'POST',
       body: JSON.stringify({ text }),
     });
   }
 
   async updateItem(listId: string, itemId: string, text: string): Promise<ListItem> {
-    return this.request<ListItem>(`/lists/${listId}/items/${itemId}`, {
+    return this.request<ListItem>(this.withDeviceId(`/lists/${listId}/items/${itemId}`), {
       method: 'PUT',
       body: JSON.stringify({ text }),
     });
   }
 
   async toggleItem(listId: string, itemId: string, completed: boolean): Promise<ListItem> {
-    return this.request<ListItem>(`/lists/${listId}/items/${itemId}`, {
+    return this.request<ListItem>(this.withDeviceId(`/lists/${listId}/items/${itemId}`), {
       method: 'PUT',
       body: JSON.stringify({ completed }),
     });
   }
 
   async deleteItem(listId: string, itemId: string): Promise<void> {
-    return this.request<void>(`/lists/${listId}/items/${itemId}`, {
+    return this.request<void>(this.withDeviceId(`/lists/${listId}/items/${itemId}`), {
       method: 'DELETE',
     });
   }
 
   async clearCompleted(listId: string): Promise<void> {
-    return this.request<void>(`/lists/${listId}/clear-completed`, {
+    return this.request<void>(this.withDeviceId(`/lists/${listId}/clear-completed`), {
       method: 'POST',
     });
   }

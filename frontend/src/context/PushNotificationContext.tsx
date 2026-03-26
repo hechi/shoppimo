@@ -96,9 +96,11 @@ export const PushNotificationProvider: React.FC<{ children: ReactNode }> = ({ ch
 
       const p256dh = p256dhKey
         ? btoa(String.fromCharCode(...new Uint8Array(p256dhKey as ArrayBuffer)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
         : '';
       const auth = authKey
         ? btoa(String.fromCharCode(...new Uint8Array(authKey as ArrayBuffer)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
         : '';
 
       await fetch(`${apiBase}/push/subscribe`, {

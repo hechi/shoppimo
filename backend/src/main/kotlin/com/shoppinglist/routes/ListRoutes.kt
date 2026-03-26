@@ -170,7 +170,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     call.application.log.warn("Error broadcasting item addition: ${e.message}")
                 }
 
-                val deviceId = call.request.header("X-Device-Id")
+                val deviceId = call.request.queryParameters["deviceId"]
                 call.application.launch(Dispatchers.Default) {
                     pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_ADDED", newItem.text)
                 }
@@ -273,7 +273,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     call.application.log.warn("Error broadcasting item update: ${e.message}")
                 }
 
-                val deviceId = call.request.header("X-Device-Id")
+                val deviceId = call.request.queryParameters["deviceId"]
                 call.application.launch(Dispatchers.Default) {
                     pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_UPDATED", updatedItem.text)
                 }
@@ -351,7 +351,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     call.application.log.warn("Error broadcasting item deletion: ${e.message}")
                 }
 
-                val deviceId = call.request.header("X-Device-Id")
+                val deviceId = call.request.queryParameters["deviceId"]
                 call.application.launch(Dispatchers.Default) {
                     pushNotificationService?.notifyListChange(listId, deviceId, "ITEM_DELETED", null)
                 }
@@ -409,7 +409,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     call.application.log.warn("Error broadcasting items cleared: ${e.message}")
                 }
 
-                val deviceId = call.request.header("X-Device-Id")
+                val deviceId = call.request.queryParameters["deviceId"]
                 call.application.launch(Dispatchers.Default) {
                     pushNotificationService?.notifyListChange(listId, deviceId, "ITEMS_CLEARED", null)
                 }
