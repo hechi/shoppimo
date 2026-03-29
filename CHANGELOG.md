@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.3.0] - 2026-03-30
+
+### Added
+
+- **Swipe-to-delete** — List items can be swiped left on mobile to reveal a delete action; full swipe auto-deletes with a collapse animation; desktop retains hover-reveal delete with confirmation
+- **Sticky bottom input** — Add Item form is fixed to the bottom of the screen on mobile for thumb-reachable access; desktop keeps it in the header
+- **Bottom sheet settings** — Burger menu opens as a full-width bottom sheet on mobile, portaled to `document.body` to avoid z-index stacking issues; redesigned with section labels, title, and inline controls
+- **Inline language switcher** — Replaced dropdown with a pill-style button group matching the theme toggle pattern
+- **Tap delay elimination** — Added `touch-action: manipulation` globally to all interactive elements, removing the 300ms delay on mobile browsers
+- **Smart autocomplete positioning** — Autocomplete dropdown flips above the input when there's insufficient space below (e.g., when the mobile keyboard is open)
+
+### Fixed
+
+- **Edit input overflow** — Fixed text input overflowing the screen on small devices in edit mode by adding `min-w-0` constraints
+
 ## [6.2.0] - 2026-03-26
 
 ### Added
