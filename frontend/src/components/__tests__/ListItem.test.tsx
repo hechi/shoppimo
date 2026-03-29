@@ -192,8 +192,8 @@ describe('ListItem', () => {
     const deleteButton = screen.getByTitle('Delete item')
     await user.click(deleteButton)
     
-    expect(screen.getByText('Delete')).toBeInTheDocument()
-    expect(screen.getByText('Cancel')).toBeInTheDocument()
+    expect(screen.getByTitle('Confirm delete')).toBeInTheDocument()
+    expect(screen.getByTitle('Cancel delete')).toBeInTheDocument()
   })
 
   it('calls onDelete when delete is confirmed', async () => {
@@ -212,7 +212,7 @@ describe('ListItem', () => {
     const deleteButton = screen.getByTitle('Delete item')
     await user.click(deleteButton)
     
-    const confirmButton = screen.getByText('Delete')
+    const confirmButton = screen.getByTitle('Confirm delete')
     await user.click(confirmButton)
     
     expect(mockOnDelete).toHaveBeenCalledWith('1')
@@ -232,10 +232,10 @@ describe('ListItem', () => {
     const deleteButton = screen.getByTitle('Delete item')
     await user.click(deleteButton)
     
-    const cancelButton = screen.getByText('Cancel')
+    const cancelButton = screen.getByTitle('Cancel delete')
     await user.click(cancelButton)
     
-    expect(screen.queryByText('Delete')).not.toBeInTheDocument()
+    expect(screen.queryByTitle('Confirm delete')).not.toBeInTheDocument()
     expect(mockOnDelete).not.toHaveBeenCalled()
   })
 

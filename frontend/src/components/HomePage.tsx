@@ -2,8 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useList } from '../context/ListContext';
 import { useI18n } from '../context/I18nContext';
-import LanguageSwitcher from './LanguageSwitcher';
-import ThemeToggle from './ThemeToggle';
+import BurgerMenu from './BurgerMenu';
 import RecentListsSection from './RecentListsSection';
 
 const HomePage = () => {
@@ -23,9 +22,8 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-        <ThemeToggle />
-        <LanguageSwitcher />
+      <div className="absolute top-4 right-4 z-20">
+        <BurgerMenu />
       </div>
       <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mt-16 sm:mt-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">

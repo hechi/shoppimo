@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface Props {
   suggestions: string[];
@@ -16,6 +16,17 @@ const AutocompleteDropdown: React.FC<Props> = ({
   highlightPrefix,
 }) => {
   const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const [openAbove, setOpenAbove] = useState(false);
+  const listRef = useRef<HTMLUListElement>(null);
+
+  // Determine if dropdown should open above or below
+  useEffect(() => {
+    if (!visible || !listRef.current) return;
+    const rect = listRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.top;
+    // If less than 200px below (keyboard likely open), flip above
+    setOpenAbove(spaceBelow < 200);
+  }, [visible, suggestions]);
 
   if (!visible) return null;
   if (suggestions.length === 0) return null;
@@ -47,17 +58,17 @@ const AutocompleteDropdown: React.FC<Props> = ({
 
   const renderHighlightedText = (text: string, prefix: string) => {
     if (!prefix) return <>{text}</>;
-    
+
     const lowerText = text.toLowerCase();
     const lowerPrefix = prefix.toLowerCase();
     const index = lowerText.indexOf(lowerPrefix);
-    
+
     if (index === -1) return <>{text}</>;
-    
+
     const before = text.substring(0, index);
     const match = text.substring(index, index + prefix.length);
     const after = text.substring(index + prefix.length);
-    
+
     return (
       <>
         <span className="sr-only">{text}</span>
@@ -72,11 +83,14 @@ const AutocompleteDropdown: React.FC<Props> = ({
 
   return (
     <ul
+      ref={listRef}
       data-testid="autocomplete-dropdown"
       role="listbox"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 outline-none"
+      className={`absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 outline-none ${
+        openAbove ? 'bottom-full mb-1' : 'top-full mt-1'
+      }`}
     >
       {displaySuggestions.map((suggestion, index) => (
         <li

@@ -10,8 +10,7 @@ import NotificationBell from './NotificationBell';
 import ClearCompletedButton from './ClearCompletedButton';
 import SyncStatusIndicator from './SyncStatusIndicator';
 import ConflictNotification from './ConflictNotification';
-import LanguageSwitcher from './LanguageSwitcher';
-import ThemeToggle from './ThemeToggle';
+import BurgerMenu from './BurgerMenu';
 import ExpirationIndicator from './ExpirationIndicator';
 
 const ListPage = () => {
@@ -159,9 +158,8 @@ const ListPage = () => {
         </div>
       )}
       
-      <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4 flex items-center gap-2">
-        <ThemeToggle />
-        <LanguageSwitcher />
+      <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4">
+        <BurgerMenu />
       </div>
       <ConflictNotification
         show={state.conflictNotification.show}
@@ -193,7 +191,10 @@ const ListPage = () => {
               </div>
             </div>
 
-            <AddItemForm />
+            {/* AddItemForm: visible in header on desktop, hidden on mobile (shown at bottom instead) */}
+            <div className="hidden md:block">
+              <AddItemForm />
+            </div>
             
             {/* Expiration Indicator */}
             {state.list?.expiresAt && (
@@ -341,6 +342,13 @@ const ListPage = () => {
             )}
           </div>
         </div>
+        {/* Spacer for mobile sticky input */}
+        <div className="h-24 md:hidden" />
+      </div>
+
+      {/* Mobile sticky bottom AddItemForm */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-3 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.08)]">
+        <AddItemForm />
       </div>
     </div>
   );
