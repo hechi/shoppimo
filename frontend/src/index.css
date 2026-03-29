@@ -41,6 +41,11 @@ body {
   background-color: var(--color-bg-secondary);
 }
 
+/* Eliminate 300ms tap delay on mobile */
+a, button, input, select, textarea, [role="option"], [role="radio"], label {
+  touch-action: manipulation;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;

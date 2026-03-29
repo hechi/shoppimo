@@ -30,7 +30,7 @@
     "workingOffline": "Offline-Modus",
     "changesWillSync": "Änderungen werden bei Wiederverbindung synchronisiert",
     "readyToStartShopping": "Bereit zum Einkaufen?",
-    "addFirstItem": "Fügen Sie Ihren ersten Artikel oben hinzu und beginnen Sie mit dem Erstellen Ihrer Einkaufsliste. Sie können sie mit anderen teilen für die Zusammenarbeit in Echtzeit!",
+    "addFirstItem": "Fügen Sie Ihren ersten Artikel hinzu und beginnen Sie mit dem Erstellen Ihrer Einkaufsliste. Sie können sie mit anderen teilen für die Zusammenarbeit in Echtzeit!",
     "listCleanupNote": "Einkaufslisten werden nach Inaktivitätsphasen automatisch bereinigt, um das System reibungslos am Laufen zu halten.",
     "itemBeingCreated": "Artikel wird erstellt...",
     "markAsIncomplete": "Als unvollständig markieren",
@@ -108,5 +108,10 @@
     "enabled": "Benachrichtigungen aktiviert",
     "blocked": "Benachrichtigungen im Browser blockiert",
     "disable": "Benachrichtigungen deaktivieren"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "theme": "Darstellung",
+    "language": "Sprache"
   }
 }

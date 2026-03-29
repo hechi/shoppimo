@@ -30,7 +30,7 @@
     "workingOffline": "Working offline",
     "changesWillSync": "Changes will sync when reconnected",
     "readyToStartShopping": "Ready to start shopping?",
-    "addFirstItem": "Add your first item above and start building your shopping list. You can share it with others for real-time collaboration!",
+    "addFirstItem": "Add your first item and start building your shopping list. You can share it with others for real-time collaboration!",
     "listCleanupNote": "Shopping lists are automatically cleaned up after periods of inactivity to keep the system running smoothly.",
     "itemBeingCreated": "Item is being created...",
     "markAsIncomplete": "Mark as incomplete",
@@ -108,5 +108,10 @@
     "enabled": "Notifications enabled",
     "blocked": "Notifications blocked in browser",
     "disable": "Disable notifications"
+  },
+  "settings": {
+    "title": "Settings",
+    "theme": "Appearance",
+    "language": "Language"
   }
 }
