@@ -19,6 +19,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
+import kotlin.test.assertFalse
 
 @Testcontainers
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -136,5 +137,55 @@ class ListRepositoryTest {
         
         assertTrue(deleted)
         assertNull(retrievedList)
+    }
+
+    @Test
+    fun `getListByAlias should return list with matching alias`() = runBlocking {
+        val listId = UUID.randomUUID()
+        listRepository.createList(listId)
+        listRepository.updateAlias(listId, "test-alias")
+        
+        val retrievedList = listRepository.getListByAlias("test-alias")
+        
+        assertNotNull(retrievedList)
+        assertEquals(listId.toString(), retrievedList.id)
+        assertEquals("test-alias", retrievedList.alias)
+    }
+
+    @Test
+    fun `getListByAlias should return null for non-existing alias`() = runBlocking {
+        val retrievedList = listRepository.getListByAlias("nonexistent")
+        
+        assertNull(retrievedList)
+    }
+
+    @Test
+    fun `updateAlias should set and clear alias`() = runBlocking {
+        val listId = UUID.randomUUID()
+        listRepository.createList(listId)
+        
+        val setResult = listRepository.updateAlias(listId, "my-alias")
+        assertTrue(setResult)
+        
+        val listWithAlias = listRepository.getListById(listId)
+        assertNotNull(listWithAlias)
+        assertEquals("my-alias", listWithAlias.alias)
+        
+        val clearResult = listRepository.updateAlias(listId, null)
+        assertTrue(clearResult)
+        
+        val listWithoutAlias = listRepository.getListById(listId)
+        assertNotNull(listWithoutAlias)
+        assertNull(listWithoutAlias.alias)
+    }
+
+    @Test
+    fun `aliasExists should return true for existing alias`() = runBlocking {
+        val listId = UUID.randomUUID()
+        listRepository.createList(listId)
+        listRepository.updateAlias(listId, "existing-alias")
+        
+        assertTrue(listRepository.aliasExists("existing-alias"))
+        assertFalse(listRepository.aliasExists("nonexistent-alias"))
     }
 }

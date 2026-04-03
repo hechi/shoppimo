@@ -18,6 +18,7 @@ A real-time collaborative shopping list app. Create a list, share the link, and 
 - **Dark Mode** — Light, dark, and system-preference theme toggle
 - **Smart Autocomplete** — Suggests items from your cross-list history as you type
 - **Push Notifications** — Opt-in Web Push alerts when list changes happen
+- **List Aliases** — Optionally assign a human-friendly alias (e.g. `groceries`) to any list, usable in place of the UUID
 - **Prometheus Metrics** — Application metrics (online users, list count, JVM, HTTP requests) exposed for Prometheus scraping
 
 ## Tech Stack
@@ -134,6 +135,8 @@ For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 | `PUT` | `/api/lists/{id}/items/{itemId}` | Update an item |
 | `DELETE` | `/api/lists/{id}/items/{itemId}` | Delete an item |
 | `POST` | `/api/lists/{id}/clear-completed` | Remove completed items |
+| `GET` | `/api/lists/by-alias/{alias}` | Resolve a list by its alias |
+| `PUT` | `/api/lists/{id}/alias` | Set, update, or remove a list's alias |
 | `WS` | `/ws/{listId}` | Real-time WebSocket connection |
 | `GET` | `/api/push/vapid-key` | Get the server's VAPID public key |
 | `POST` | `/api/push/subscribe` | Subscribe to push notifications |
@@ -145,7 +148,7 @@ Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before
 
 ## Security
 
-This app has no authentication — lists are accessible to anyone who knows the UUID. See [SECURITY.md](SECURITY.md) for deployment guidance and how to report vulnerabilities.
+This app has no authentication — lists are accessible to anyone who knows the UUID or alias. See [SECURITY.md](SECURITY.md) for deployment guidance and how to report vulnerabilities.
 
 ## License
 

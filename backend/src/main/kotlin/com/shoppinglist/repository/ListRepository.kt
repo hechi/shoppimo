@@ -10,4 +10,7 @@ interface ListRepository {
     suspend fun deleteList(id: UUID): Boolean
     suspend fun listExists(id: UUID): Boolean
     suspend fun getListWithExpiration(id: UUID): ShoppingList?
+    suspend fun getListByAlias(alias: String): ShoppingList?
+    suspend fun updateAlias(id: UUID, alias: String?): Boolean
+    suspend fun aliasExists(alias: String): Boolean
 }

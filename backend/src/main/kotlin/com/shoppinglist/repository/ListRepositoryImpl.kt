@@ -51,7 +51,8 @@ class ListRepositoryImpl : ListRepository {
             id = listRow[ShoppingLists.id].toString(),
             items = items,
             createdAt = listRow[ShoppingLists.createdAt].toString(),
-            lastModified = listRow[ShoppingLists.lastModified].toString()
+            lastModified = listRow[ShoppingLists.lastModified].toString(),
+            alias = listRow[ShoppingLists.alias]
         )
     }
     
@@ -100,7 +101,59 @@ class ListRepositoryImpl : ListRepository {
             items = items,
             createdAt = listRow[ShoppingLists.createdAt].toString(),
             lastModified = lastModified.toString(),
-            expiresAt = expiresAt.toString()
+            expiresAt = expiresAt.toString(),
+            alias = listRow[ShoppingLists.alias]
         )
+    }
+    
+    override suspend fun getListByAlias(alias: String): ShoppingList? = newSuspendedTransaction {
+        val normalizedAlias = alias.trim().lowercase()
+        
+        val listRow = ShoppingLists.select { ShoppingLists.alias eq normalizedAlias }.singleOrNull()
+            ?: return@newSuspendedTransaction null
+        
+        val listId = listRow[ShoppingLists.id].value
+        
+        val items = ListItems
+            .select { ListItems.listId eq listId }
+            .orderBy(ListItems.itemOrder)
+            .map { row ->
+                ListItem(
+                    id = row[ListItems.id].toString(),
+                    text = row[ListItems.text],
+                    completed = row[ListItems.completed],
+                    createdAt = row[ListItems.createdAt].toString(),
+                    order = row[ListItems.itemOrder]
+                )
+            }
+        
+        val retentionDays = System.getenv("LIST_RETENTION_DAYS")?.toLongOrNull()
+            ?: System.getProperty("LIST_RETENTION_DAYS")?.toLongOrNull()
+            ?: 30L
+        val lastModified = listRow[ShoppingLists.lastModified]
+        val expiresAt = lastModified.plus(retentionDays, ChronoUnit.DAYS)
+        
+        ShoppingList(
+            id = listRow[ShoppingLists.id].toString(),
+            items = items,
+            createdAt = listRow[ShoppingLists.createdAt].toString(),
+            lastModified = lastModified.toString(),
+            expiresAt = expiresAt.toString(),
+            alias = listRow[ShoppingLists.alias]
+        )
+    }
+    
+    override suspend fun updateAlias(id: UUID, alias: String?): Boolean = newSuspendedTransaction {
+        val normalizedAlias = alias?.trim()?.lowercase()
+        
+        val updatedRows = ShoppingLists.update({ ShoppingLists.id eq id }) {
+            it[ShoppingLists.alias] = normalizedAlias
+        }
+        updatedRows > 0
+    }
+    
+    override suspend fun aliasExists(alias: String): Boolean = newSuspendedTransaction {
+        val normalizedAlias = alias.trim().lowercase()
+        ShoppingLists.select { ShoppingLists.alias eq normalizedAlias }.count() > 0
     }
 }

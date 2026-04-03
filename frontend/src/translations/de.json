@@ -112,6 +112,15 @@
   "settings": {
     "title": "Einstellungen",
     "theme": "Darstellung",
-    "language": "Sprache"
+    "language": "Sprache",
+    "alias": "Listen-Alias",
+    "aliasDescription": "Legen Sie einen Kurznamen fest, um diese Liste einfach zu erreichen (z.B. über KI-Assistenten)",
+    "aliasPlaceholder": "z.B. einkauf, wocheneinkauf",
+    "aliasSaved": "Alias gespeichert",
+    "aliasRemoved": "Alias entfernt",
+    "aliasInvalid": "Nur Kleinbuchstaben, Zahlen und Bindestriche erlaubt",
+    "aliasConflict": "Dieser Alias wird bereits von einer anderen Liste verwendet",
+    "aliasSave": "Speichern",
+    "aliasRemove": "Entfernen"
   }
 }

@@ -8,7 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **List alias** — Optional human-friendly alias (e.g. `groceries`) for shopping lists, usable in place of the UUID; aliases are unique among active lists, normalized to lowercase, and deleted automatically when the list expires. New endpoints: `GET /api/lists/by-alias/{alias}` to resolve an alias, `PUT /api/lists/{id}/alias` to set, update, or remove it. Small settings UI in the burger menu for managing the alias per list.
 - **AGENTS.md** — AI coding agent instructions covering project overview, tech stack, exact commands, coding conventions, development lifecycle (branch-per-change, Conventional Commits, CHANGELOG discipline), PR workflow, and three-tier boundaries (always/ask/never)
+
+### Changed
+- **Database schema initialization** — Switched from `SchemaUtils.create()` to `SchemaUtils.createMissingTablesAndColumns()` so new columns (like alias) are automatically added to existing tables on deployment without manual migration
 
 ### Fixed
 - **Flaky backend tests** — Resolved intermittent `PSQLException: Connection refused` errors in CI by fixing Testcontainers lifecycle mismatch (`@Container` moved to `companion object` for all `@TestInstance(PER_CLASS)` test classes) and disabling parallel test-class execution (`maxParallelForks = 1`) to prevent Exposed's global database registry from being overwritten mid-test by a concurrently running test class

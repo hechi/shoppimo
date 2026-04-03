@@ -9,7 +9,8 @@ data class ShoppingList(
     val items: List<ListItem> = emptyList(),
     val createdAt: String,
     val lastModified: String,
-    val expiresAt: String? = null
+    val expiresAt: String? = null,
+    val alias: String? = null
 )
 
 @Serializable
@@ -23,5 +24,11 @@ data class ShoppingListResponse(
     val items: List<ListItem>,
     val createdAt: String,
     val lastModified: String,
-    val expiresAt: String? = null
+    val expiresAt: String? = null,
+    val alias: String? = null
+)
+
+@Serializable
+data class UpdateAliasRequest(
+    val alias: String? = null
 )

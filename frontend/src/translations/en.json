@@ -112,6 +112,15 @@
   "settings": {
     "title": "Settings",
     "theme": "Appearance",
-    "language": "Language"
+    "language": "Language",
+    "alias": "List Alias",
+    "aliasDescription": "Set a short name to access this list easily (e.g., from AI assistants)",
+    "aliasPlaceholder": "e.g. groceries, weekly-shop",
+    "aliasSaved": "Alias saved",
+    "aliasRemoved": "Alias removed",
+    "aliasInvalid": "Only lowercase letters, numbers and hyphens allowed",
+    "aliasConflict": "This alias is already used by another list",
+    "aliasSave": "Save",
+    "aliasRemove": "Remove"
   }
 }

@@ -104,6 +104,17 @@ class ApiClient {
     });
   }
 
+  async updateAlias(listId: string, alias: string | null): Promise<ShoppingList> {
+    return this.request<ShoppingList>(`/lists/${listId}/alias`, {
+      method: 'PUT',
+      body: JSON.stringify({ alias }),
+    });
+  }
+
+  async getListByAlias(alias: string): Promise<ShoppingList> {
+    return this.request<ShoppingList>(`/lists/by-alias/${encodeURIComponent(alias)}`);
+  }
+
   async clearCompleted(listId: string): Promise<void> {
     return this.request<void>(this.withDeviceId(`/lists/${listId}/clear-completed`), {
       method: 'POST',
