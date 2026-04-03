@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- **Flaky backend tests** — Resolved intermittent `PSQLException: Connection refused` errors in CI by fixing Testcontainers lifecycle mismatch (`@Container` moved to `companion object` for all `@TestInstance(PER_CLASS)` test classes) and disabling parallel test-class execution (`maxParallelForks = 1`) to prevent Exposed's global database registry from being overwritten mid-test by a concurrently running test class
+
 ## [6.3.0] - 2026-03-30
 
 ### Added
