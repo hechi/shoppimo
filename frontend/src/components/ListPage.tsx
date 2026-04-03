@@ -1,5 +1,5 @@
 import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useList } from '../context/ListContext';
 import { useI18n } from '../context/I18nContext';
 import { useLocalCache } from '../context/LocalCacheContext';
@@ -18,6 +18,11 @@ const ListPage = () => {
   const { state, connectionStatus, syncState, loadList, updateItem, deleteItem, toggleItem, dismissConflictNotification } = useList();
   const { t } = useI18n();
   const { addRecentList, removeInvalidList, updateItemCount } = useLocalCache();
+  const [currentAlias, setCurrentAlias] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCurrentAlias(state.list?.alias ?? null);
+  }, [state.list?.alias]);
 
   useEffect(() => {
     if (listId) {
@@ -159,7 +164,7 @@ const ListPage = () => {
       )}
       
       <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4">
-        <BurgerMenu />
+        <BurgerMenu listId={listId} currentAlias={currentAlias} onAliasChanged={setCurrentAlias} />
       </div>
       <ConflictNotification
         show={state.conflictNotification.show}

@@ -7,6 +7,7 @@ import java.time.Instant
 object ShoppingLists : UUIDTable("shopping_lists") {
     val createdAt = timestamp("created_at").default(Instant.now())
     val lastModified = timestamp("last_modified").default(Instant.now())
+    val alias = varchar("alias", 64).nullable().uniqueIndex("uq_shopping_lists_alias")
 }
 
 object ListItems : UUIDTable("list_items") {

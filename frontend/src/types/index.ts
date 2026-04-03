@@ -14,6 +14,7 @@ export interface ShoppingList {
   createdAt: string;
   lastModified: string;
   expiresAt?: string;
+  alias?: string;
 }
 
 export interface WebSocketMessage {

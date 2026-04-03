@@ -427,5 +427,131 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                 )
             }
         }
+        
+        // GET /api/lists/by-alias/{alias} - Resolve alias to list
+        get("/by-alias/{alias}") {
+            try {
+                val aliasParam = call.parameters["alias"]
+                if (aliasParam.isNullOrBlank()) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse("missing_alias", "Alias is required")
+                    )
+                    return@get
+                }
+                
+                val normalizedAlias = aliasParam.trim().lowercase()
+                
+                val list = listRepository.getListByAlias(normalizedAlias)
+                if (list == null) {
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        ErrorResponse("list_not_found", "No list found with this alias")
+                    )
+                    return@get
+                }
+                
+                call.respond(HttpStatusCode.OK, list)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    ErrorResponse("server_error", "Failed to resolve alias")
+                )
+            }
+        }
+        
+        // PUT /api/lists/{id}/alias - Set/update/remove alias
+        put("/{id}/alias") {
+            try {
+                val idParam = call.parameters["id"]
+                if (idParam == null) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse("missing_id", "List ID is required")
+                    )
+                    return@put
+                }
+                
+                val listId = try {
+                    UUID.fromString(idParam)
+                } catch (e: IllegalArgumentException) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse("invalid_id", "Invalid UUID format for list ID")
+                    )
+                    return@put
+                }
+                
+                if (!listRepository.listExists(listId)) {
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        ErrorResponse("list_not_found", "Shopping list not found")
+                    )
+                    return@put
+                }
+                
+                val request = try {
+                    call.receive<UpdateAliasRequest>()
+                } catch (e: Exception) {
+                    call.respond(
+                        HttpStatusCode.BadRequest,
+                        ErrorResponse("invalid_request", "Invalid request body")
+                    )
+                    return@put
+                }
+                
+                val normalizedAlias = request.alias?.trim()?.lowercase()
+                
+                if (normalizedAlias != null) {
+                    val trimmedInput = request.alias!!.trim()
+                    val aliasRegex = Regex("^[a-z0-9]([a-z0-9-]*[a-z0-9])?\$")
+                    if (!aliasRegex.matches(trimmedInput) || trimmedInput.length > 64) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ErrorResponse("invalid_alias", "Alias must be 1-64 characters, lowercase alphanumeric and hyphens only, cannot start or end with a hyphen")
+                        )
+                        return@put
+                    }
+                    
+                    val uuidRegex = Regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\$")
+                    if (uuidRegex.matches(normalizedAlias)) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ErrorResponse("invalid_alias", "Alias cannot be in UUID format")
+                        )
+                        return@put
+                    }
+                    
+                    if (listRepository.aliasExists(normalizedAlias)) {
+                        val currentList = listRepository.getListWithExpiration(listId)
+                        if (currentList?.alias != normalizedAlias) {
+                            call.respond(
+                                HttpStatusCode.Conflict,
+                                ErrorResponse("alias_taken", "This alias is already in use by another list")
+                            )
+                            return@put
+                        }
+                    }
+                }
+                
+                listRepository.updateAlias(listId, normalizedAlias)
+                
+                val updatedList = listRepository.getListWithExpiration(listId)
+                if (updatedList == null) {
+                    call.respond(
+                        HttpStatusCode.NotFound,
+                        ErrorResponse("list_not_found", "Shopping list not found")
+                    )
+                    return@put
+                }
+                
+                call.respond(HttpStatusCode.OK, updatedList)
+            } catch (e: Exception) {
+                call.respond(
+                    HttpStatusCode.InternalServerError,
+                    ErrorResponse("server_error", "Failed to update alias")
+                )
+            }
+        }
     }
 }

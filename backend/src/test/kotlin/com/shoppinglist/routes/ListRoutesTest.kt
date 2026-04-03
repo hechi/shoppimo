@@ -22,6 +22,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @Testcontainers
@@ -533,5 +534,184 @@ class ListRoutesTest {
         assertEquals(2, retrievedList.items.size)
         assertEquals("Item 1", retrievedList.items[0].text)
         assertEquals("Item 2", retrievedList.items[1].text)
+    }
+
+    @Test
+    fun `PUT api lists id alias should set alias on list`() = testApplication {
+        application {
+            configureSerialization()
+            configureCORS()
+            configureRouting()
+        }
+
+        val createResponse = client.post("/api/lists") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        val createdList = json.decodeFromString<ShoppingList>(createResponse.bodyAsText())
+
+        val aliasResponse = client.put("/api/lists/${createdList.id}/alias") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"alias": "my-groceries"}""")
+        }
+
+        assertEquals(HttpStatusCode.OK, aliasResponse.status)
+        val updatedList = json.decodeFromString<ShoppingList>(aliasResponse.bodyAsText())
+        assertEquals("my-groceries", updatedList.alias)
+    }
+
+    @Test
+    fun `PUT api lists id alias should reject invalid alias format`() = testApplication {
+        application {
+            configureSerialization()
+            configureCORS()
+            configureRouting()
+        }
+
+        val createResponse = client.post("/api/lists") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        val createdList = json.decodeFromString<ShoppingList>(createResponse.bodyAsText())
+
+        val invalidAliases = listOf("has spaces", "UPPER", "special!char", "-starts-with-hyphen", "ends-with-hyphen-")
+        for (invalidAlias in invalidAliases) {
+            val response = client.put("/api/lists/${createdList.id}/alias") {
+                contentType(ContentType.Application.Json)
+                setBody("""{"alias": "$invalidAlias"}""")
+            }
+            assertEquals(HttpStatusCode.BadRequest, response.status, "Expected 400 for alias: $invalidAlias")
+        }
+    }
+
+    @Test
+    fun `PUT api lists id alias should reject duplicate alias`() = testApplication {
+        application {
+            configureSerialization()
+            configureCORS()
+            configureRouting()
+        }
+
+        val list1Response = client.post("/api/lists") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        val list1 = json.decodeFromString<ShoppingList>(list1Response.bodyAsText())
+
+        val list2Response = client.post("/api/lists") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        val list2 = json.decodeFromString<ShoppingList>(list2Response.bodyAsText())
+
+        client.put("/api/lists/${list1.id}/alias") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"alias": "shared-alias"}""")
+        }
+
+        val conflictResponse = client.put("/api/lists/${list2.id}/alias") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"alias": "shared-alias"}""")
+        }
+
+        assertEquals(HttpStatusCode.Conflict, conflictResponse.status)
+        val responseBody = conflictResponse.bodyAsText()
+        assertTrue(responseBody.contains("alias_taken"))
+    }
+
+    @Test
+    fun `PUT api lists id alias should allow removing alias`() = testApplication {
+        application {
+            configureSerialization()
+            configureCORS()
+            configureRouting()
+        }
+
+        val createResponse = client.post("/api/lists") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        val createdList = json.decodeFromString<ShoppingList>(createResponse.bodyAsText())
+
+        client.put("/api/lists/${createdList.id}/alias") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"alias": "temp-alias"}""")
+        }
+
+        val removeResponse = client.put("/api/lists/${createdList.id}/alias") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"alias": null}""")
+        }
+
+        assertEquals(HttpStatusCode.OK, removeResponse.status)
+        val updatedList = json.decodeFromString<ShoppingList>(removeResponse.bodyAsText())
+        assertNull(updatedList.alias)
+    }
+
+    @Test
+    fun `GET api lists by-alias alias should resolve alias to list`() = testApplication {
+        application {
+            configureSerialization()
+            configureCORS()
+            configureRouting()
+        }
+
+        val createResponse = client.post("/api/lists") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        val createdList = json.decodeFromString<ShoppingList>(createResponse.bodyAsText())
+
+        client.put("/api/lists/${createdList.id}/alias") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"alias": "weekly-shop"}""")
+        }
+
+        val resolveResponse = client.get("/api/lists/by-alias/weekly-shop")
+
+        assertEquals(HttpStatusCode.OK, resolveResponse.status)
+        val resolvedList = json.decodeFromString<ShoppingList>(resolveResponse.bodyAsText())
+        assertEquals(createdList.id, resolvedList.id)
+        assertEquals("weekly-shop", resolvedList.alias)
+    }
+
+    @Test
+    fun `GET api lists by-alias alias should return 404 for unknown alias`() = testApplication {
+        application {
+            configureSerialization()
+            configureCORS()
+            configureRouting()
+        }
+
+        val response = client.get("/api/lists/by-alias/nonexistent")
+
+        assertEquals(HttpStatusCode.NotFound, response.status)
+        val responseBody = response.bodyAsText()
+        assertTrue(responseBody.contains("No list found with this alias"))
+    }
+
+    @Test
+    fun `PUT api lists id alias should reject UUID-format aliases`() = testApplication {
+        application {
+            configureSerialization()
+            configureCORS()
+            configureRouting()
+        }
+
+        val createResponse = client.post("/api/lists") {
+            contentType(ContentType.Application.Json)
+            setBody("{}")
+        }
+        val createdList = json.decodeFromString<ShoppingList>(createResponse.bodyAsText())
+
+        val uuidAlias = UUID.randomUUID().toString()
+        val response = client.put("/api/lists/${createdList.id}/alias") {
+            contentType(ContentType.Application.Json)
+            setBody("""{"alias": "$uuidAlias"}""")
+        }
+
+        assertEquals(HttpStatusCode.BadRequest, response.status)
+        val responseBody = response.bodyAsText()
+        assertTrue(responseBody.contains("UUID format"))
     }
 }
