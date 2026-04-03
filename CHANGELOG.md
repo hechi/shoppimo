@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **AGENTS.md** — AI coding agent instructions covering project overview, tech stack, exact commands, coding conventions, development lifecycle (branch-per-change, Conventional Commits, CHANGELOG discipline), PR workflow, and three-tier boundaries (always/ask/never)
+
 ### Fixed
 - **Flaky backend tests** — Resolved intermittent `PSQLException: Connection refused` errors in CI by fixing Testcontainers lifecycle mismatch (`@Container` moved to `companion object` for all `@TestInstance(PER_CLASS)` test classes) and disabling parallel test-class execution (`maxParallelForks = 1`) to prevent Exposed's global database registry from being overwritten mid-test by a concurrently running test class
 
