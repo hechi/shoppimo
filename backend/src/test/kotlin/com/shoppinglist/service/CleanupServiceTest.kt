@@ -27,12 +27,15 @@ import kotlin.test.assertNull
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CleanupServiceTest {
     
-    @Container
-    private val postgres = PostgreSQLContainer("postgres:15-alpine")
-        .withDatabaseName("test_cleanup")
-        .withUsername("test_user")
-        .withPassword("test_pass")
-    
+    companion object {
+        @Container
+        @JvmField
+        val postgres = PostgreSQLContainer("postgres:15-alpine")
+            .withDatabaseName("test_cleanup")
+            .withUsername("test_user")
+            .withPassword("test_pass")
+    }
+
     private lateinit var database: Database
     private lateinit var cleanupService: CleanupService
     private lateinit var listRepository: ListRepositoryImpl

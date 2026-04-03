@@ -30,11 +30,14 @@ import kotlin.test.assertTrue
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class WebSocketIntegrationTest {
 
-    @Container
-    private val postgres = PostgreSQLContainer("postgres:15-alpine")
-        .withDatabaseName("test_shopping_lists")
-        .withUsername("test_user")
-        .withPassword("test_pass")
+    companion object {
+        @Container
+        @JvmField
+        val postgres = PostgreSQLContainer("postgres:15-alpine")
+            .withDatabaseName("test_shopping_lists")
+            .withUsername("test_user")
+            .withPassword("test_pass")
+    }
 
     private lateinit var database: Database
     private val json = Json { ignoreUnknownKeys = true }
