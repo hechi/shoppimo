@@ -59,10 +59,7 @@ dependencies {
     
     // Metrics
     implementation("io.ktor:ktor-server-metrics-micrometer")
-    // Legacy simpleclient module keeps the existing metric names (e.g. *_total gauges);
-    // the newer io.micrometer.prometheusmetrics client strips reserved suffixes and would
-    // rename metrics, breaking the Grafana dashboards in monitoring/.
-    implementation("io.micrometer:micrometer-registry-prometheus-simpleclient:1.17.0")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.17.0")
     
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
