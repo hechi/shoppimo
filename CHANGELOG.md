@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Database schema initialization** — Switched from `SchemaUtils.create()` to `SchemaUtils.createMissingTablesAndColumns()` so new columns (like alias) are automatically added to existing tables on deployment without manual migration
+- **Frontend dependencies** — Updated all frontend packages to their latest compatible (non-breaking) versions, including Cypress, Vitest, i18next, react-i18next, jsdom, PostCSS, autoprefixer, TailwindCSS, and vite-plugin-pwa, keeping the toolchain current and reducing the surface for known issues
 
 ### Fixed
 - **Flaky backend tests** — Resolved intermittent `PSQLException: Connection refused` errors in CI by fixing Testcontainers lifecycle mismatch (`@Container` moved to `companion object` for all `@TestInstance(PER_CLASS)` test classes) and disabling parallel test-class execution (`maxParallelForks = 1`) to prevent Exposed's global database registry from being overwritten mid-test by a concurrently running test class
+- **Add-item timeout type** — Replaced the Node-specific `NodeJS.Timeout` type in the Add Item form with the browser-safe `ReturnType<typeof setTimeout>`, so the TypeScript build no longer depends on Node type definitions that don't belong in browser code
 
 ## [6.3.0] - 2026-03-30
 
