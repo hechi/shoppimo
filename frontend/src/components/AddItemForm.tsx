@@ -11,7 +11,7 @@ const AddItemForm = () => {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const blurTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const blurTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { addItem } = useList();
   const { t } = useI18n();
 
