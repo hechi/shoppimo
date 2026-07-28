@@ -59,7 +59,10 @@ dependencies {
     
     // Metrics
     implementation("io.ktor:ktor-server-metrics-micrometer")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.12.4")
+    // Legacy simpleclient module keeps the existing metric names (e.g. *_total gauges);
+    // the newer io.micrometer.prometheusmetrics client strips reserved suffixes and would
+    // rename metrics, breaking the Grafana dashboards in monitoring/.
+    implementation("io.micrometer:micrometer-registry-prometheus-simpleclient:1.17.0")
     
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
@@ -74,7 +77,8 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.21.4")
     testImplementation("org.testcontainers:postgresql:1.21.4")
     testImplementation("org.testcontainers:junit-jupiter:1.21.4")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.5")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.14.4")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.4")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 }
 
