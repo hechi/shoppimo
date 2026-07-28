@@ -1,13 +1,13 @@
 # Production Dockerfile for React frontend with Nginx serving
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (regenerate the lock file each build to stay in sync)
+RUN npm install
 
 # Copy source code
 COPY . .
