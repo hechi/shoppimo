@@ -36,10 +36,10 @@ describe('HomePage', () => {
       </BrowserRouter>
     );
     
-    expect(container.querySelector('.dark\\:bg-gray-900')).toBeTruthy();
-    expect(container.querySelector('.dark\\:bg-gray-800')).toBeTruthy();
-    expect(container.querySelector('.dark\\:text-gray-100')).toBeTruthy();
+    // Card surface, brand title gradient and muted text all carry dark: variants
+    expect(container.querySelector('[class*="dark:bg-gray-800"]')).toBeTruthy();
     expect(container.querySelector('.dark\\:text-gray-400')).toBeTruthy();
-    expect(container.querySelector('.dark\\:bg-blue-500')).toBeTruthy();
+    expect(container.querySelector('.dark\\:from-blue-400')).toBeTruthy();
+    expect(container.querySelector('.dark\\:to-blue-500')).toBeTruthy();
   });
 });

@@ -21,21 +21,28 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center px-4">
       <div className="absolute top-4 right-4 z-20">
         <BurgerMenu />
       </div>
-      <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 mt-16 sm:mt-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center">
+      <div className="max-w-md w-full bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm ring-1 ring-gray-200/70 dark:ring-gray-700/60 rounded-3xl shadow-card p-8 mt-16 sm:mt-8 animate-scale-in">
+        <div className="flex justify-center mb-5">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-700 shadow-lift flex items-center justify-center">
+            <svg className="w-9 h-9 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+            </svg>
+          </div>
+        </div>
+        <h1 className="text-4xl font-extrabold tracking-tight mb-3 text-center bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-400 dark:to-blue-500 bg-clip-text text-transparent">
           {t('app.title')}
         </h1>
-        <p className="text-gray-600 dark:text-gray-400 mb-8 text-center">
+        <p className="text-gray-600 dark:text-gray-400 mb-8 text-center leading-relaxed">
           {t('app.description')}
         </p>
         <button
           onClick={handleCreateList}
           disabled={state.loading.isLoading}
-          className="w-full bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 disabled:bg-blue-400 dark:disabled:bg-blue-800 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:from-blue-400 disabled:to-blue-400 dark:disabled:from-blue-800 dark:disabled:to-blue-800 text-white font-semibold py-3.5 px-4 rounded-xl shadow-lift hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0 disabled:shadow-none disabled:translate-y-0"
           data-testid="create-list-button"
         >
           {state.loading.isLoading ? t('buttons.creating') : t('buttons.createNewList')}

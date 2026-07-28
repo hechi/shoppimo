@@ -16,7 +16,7 @@ export default defineConfig({
         name: 'Shoppimo',
         short_name: 'Shoppimo',
         description: 'A collaborative shopping list app with real-time sync',
-        theme_color: '#3b82f6',
+        theme_color: '#6366f1',
         background_color: '#ffffff',
         display: 'standalone',
         scope: '/',

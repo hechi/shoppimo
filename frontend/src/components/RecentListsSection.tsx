@@ -60,7 +60,7 @@ const RecentListsSection: React.FC = () => {
           <button
             key={list.id}
             onClick={() => handleListClick(list.id, list.url)}
-            className="w-full text-left p-3 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600"
+            className="group w-full text-left p-3.5 bg-gray-50/80 dark:bg-gray-900/50 hover:bg-white dark:hover:bg-gray-800 rounded-xl transition-all border border-gray-200/70 dark:border-gray-700/60 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-soft hover:-translate-y-0.5"
             data-testid="recent-list-item"
           >
             <div className="flex items-center justify-between">
@@ -84,7 +84,7 @@ const RecentListsSection: React.FC = () => {
                 </div>
               </div>
               <div className="ml-3 flex-shrink-0">
-                <svg className="w-4 h-4 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform group-hover:translate-x-1 group-hover:text-blue-500 dark:group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>

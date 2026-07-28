@@ -59,7 +59,7 @@ const ThemeToggle: React.FC = () => {
       ref={containerRef}
       role="radiogroup"
       aria-label={t('theme.label', {}, 'Theme')}
-      className="relative flex items-center gap-0.5 p-1 bg-gray-100 rounded-lg shadow-sm dark:bg-gray-700"
+      className="relative flex items-center gap-0.5 p-1 bg-gray-100 rounded-xl shadow-inner dark:bg-gray-700"
     >
       {/* Sliding pill indicator */}
       {pillStyle && (

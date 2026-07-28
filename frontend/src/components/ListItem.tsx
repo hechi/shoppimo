@@ -144,7 +144,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
   return (
     <div
       ref={rowRef}
-      className={`relative overflow-hidden rounded-lg transition-all duration-200 ${isDeleting ? 'max-h-0 opacity-0' : 'max-h-40'}`}
+      className={`relative overflow-hidden rounded-xl transition-all duration-200 ${isDeleting ? 'max-h-0 opacity-0' : 'max-h-40'}`}
       data-testid={`item-${item.id}`}
     >
       {/* Delete background revealed on swipe */}
@@ -165,8 +165,8 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
           isTemporary
             ? 'bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 opacity-75'
             : item.completed
-              ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800'
-              : 'bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-800'
+              ? 'bg-green-50/80 dark:bg-green-900/25 border border-green-200/80 dark:border-green-800/80'
+              : 'bg-gray-50/80 dark:bg-gray-900/50 border border-gray-200/70 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-soft active:bg-gray-100 dark:active:bg-gray-800'
         }`}
         style={{
           transform: `translateX(${swipeX}px)`,

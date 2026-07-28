@@ -61,8 +61,9 @@ describe('ListPage', () => {
       </BrowserRouter>
     );
     
-    expect(container.querySelector('.dark\\:from-gray-900')).toBeTruthy();
-    expect(container.querySelector('.dark\\:bg-gray-800')).toBeTruthy();
+    // Card surface, primary text and brand icon gradient all carry dark: variants
+    expect(container.querySelector('[class*="dark:bg-gray-800"]')).toBeTruthy();
     expect(container.querySelector('.dark\\:text-gray-100')).toBeTruthy();
+    expect(container.querySelector('.dark\\:from-blue-600')).toBeTruthy();
   });
 });

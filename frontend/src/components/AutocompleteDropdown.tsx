@@ -88,8 +88,8 @@ const AutocompleteDropdown: React.FC<Props> = ({
       role="listbox"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className={`absolute z-10 w-full bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 outline-none ${
-        openAbove ? 'bottom-full mb-1' : 'top-full mt-1'
+      className={`absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-card max-h-60 overflow-auto dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 outline-none animate-fade-in p-1 ${
+        openAbove ? 'bottom-full mb-2' : 'top-full mt-2'
       }`}
     >
       {displaySuggestions.map((suggestion, index) => (
@@ -99,7 +99,7 @@ const AutocompleteDropdown: React.FC<Props> = ({
           role="option"
           aria-selected={activeIndex === index ? 'true' : 'false'}
           onClick={() => onSelect(suggestion)}
-          className={`px-4 py-2 cursor-pointer ${
+          className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${
             activeIndex === index
               ? 'bg-blue-100 text-blue-900 dark:bg-blue-900 dark:text-blue-100'
               : 'hover:bg-gray-100 dark:hover:bg-gray-700'
