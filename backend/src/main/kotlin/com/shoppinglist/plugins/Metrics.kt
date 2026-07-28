@@ -8,8 +8,8 @@ import io.micrometer.core.instrument.binder.jvm.JvmGcMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmMemoryMetrics
 import io.micrometer.core.instrument.binder.jvm.JvmThreadMetrics
 import io.micrometer.core.instrument.binder.system.ProcessorMetrics
-import io.micrometer.prometheus.PrometheusConfig
-import io.micrometer.prometheus.PrometheusMeterRegistry
+import io.micrometer.prometheusmetrics.PrometheusConfig
+import io.micrometer.prometheusmetrics.PrometheusMeterRegistry
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import java.util.concurrent.atomic.AtomicLong
@@ -33,7 +33,7 @@ fun Application.configureMetrics() {
         )
     }
 
-    Gauge.builder("shoppimo_websocket_connections_total", this) { app ->
+    Gauge.builder("shoppimo_websocket_connections", this) { app ->
         try {
             val wsService = app.attributes.getOrNull(WebSocketServiceKey)
             wsService?.getConnectionManager()
@@ -48,7 +48,7 @@ fun Application.configureMetrics() {
         .description("Total number of active WebSocket connections across all lists")
         .register(appMicrometerRegistry)
 
-    Gauge.builder("shoppimo_shopping_lists_total", cachedListCount) { cached ->
+    Gauge.builder("shoppimo_shopping_lists", cachedListCount) { cached ->
         try {
             val count = transaction { ShoppingLists.selectAll().count() }
             cached.set(count)

@@ -37,7 +37,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "shoppimo_websocket_connections_total{job=\"shopping-list-backend\"}",
+          "expr": "shoppimo_websocket_connections{job=\"shopping-list-backend\"}",
           "legendFormat": "Connections",
           "refId": "A"
         }
@@ -75,7 +75,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "shoppimo_shopping_lists_total{job=\"shopping-list-backend\"}",
+          "expr": "shoppimo_shopping_lists{job=\"shopping-list-backend\"}",
           "legendFormat": "Lists",
           "refId": "A"
         }
@@ -185,7 +185,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "shoppimo_websocket_connections_total{job=\"shopping-list-backend\"}",
+          "expr": "shoppimo_websocket_connections{job=\"shopping-list-backend\"}",
           "legendFormat": "WebSocket Connections",
           "refId": "A"
         }
@@ -221,7 +221,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${DS_PROMETHEUS}" },
-          "expr": "shoppimo_shopping_lists_total{job=\"shopping-list-backend\"}",
+          "expr": "shoppimo_shopping_lists{job=\"shopping-list-backend\"}",
           "legendFormat": "Total Lists",
           "refId": "A"
         }
