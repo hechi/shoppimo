@@ -149,7 +149,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
     >
       {/* Delete background revealed on swipe */}
       <div
-        className="absolute inset-y-0 right-0 flex items-center bg-red-500 dark:bg-red-600 px-6 text-white font-medium text-sm cursor-pointer active:bg-red-700"
+        className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-red-500 dark:bg-red-600 text-white font-medium text-sm cursor-pointer active:bg-red-700"
         onClick={() => { if (swipeX <= -SWIPE_THRESHOLD) handleDeleteClick(); }}
         aria-label={t('messages.deleteItem')}
       >
@@ -161,12 +161,12 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
 
       {/* Swipeable foreground */}
       <div
-        className={`relative flex items-center gap-3 p-4 md:p-3 group transition-colors ${
+        className={`relative w-full flex items-center gap-3 p-4 md:p-3 group transition-colors rounded-xl ${
           isTemporary
             ? 'bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 opacity-75'
             : item.completed
-              ? 'bg-green-50/80 dark:bg-green-900/25 border border-green-200/80 dark:border-green-800/80'
-              : 'bg-gray-50/80 dark:bg-gray-900/50 border border-gray-200/70 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-soft active:bg-gray-100 dark:active:bg-gray-800'
+              ? 'bg-green-50 dark:bg-green-900/25 border border-green-200/80 dark:border-green-800/80'
+              : 'bg-gray-50 dark:bg-gray-900 border border-gray-200/70 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-soft active:bg-gray-100 dark:active:bg-gray-800'
         }`}
         style={{
           transform: `translateX(${swipeX}px)`,
