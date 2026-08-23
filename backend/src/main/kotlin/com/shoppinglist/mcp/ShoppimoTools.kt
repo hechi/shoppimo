@@ -32,6 +32,7 @@ object ShoppimoTools {
         registerCreateList(server)
         registerGetList(server)
         registerGetListByAlias(server)
+        registerSetAlias(server)
         registerAddItem(server)
         registerRemoveItem(server)
         registerCheckItem(server)
@@ -168,6 +169,72 @@ object ShoppimoTools {
                     }
                 }.toString()))
             )
+        }
+    }
+
+    private fun registerSetAlias(server: Server) {
+        server.addTool(
+            name = "set_alias",
+            description = "Set or update a human-friendly alias for a shopping list (e.g. 'groceries', 'hornbach'). Aliases must be lowercase, alphanumeric with hyphens, max 64 chars. Pass null/empty to remove an existing alias.",
+            inputSchema = toolSchema(
+                properties = buildJsonObject {
+                    putJsonObject("list_id") {
+                        put("type", "string")
+                        put("description", "The UUID of the shopping list.")
+                    }
+                    putJsonObject("alias") {
+                        put("type", "string")
+                        put("description", "The alias to set (lowercase, alphanumeric, hyphens allowed, max 64 chars). Send empty string or omit to remove the alias.")
+                    }
+                },
+                required = listOf("list_id")
+            )
+        ) { request ->
+            val args = request.arguments ?: return@addTool errorResult("Arguments required")
+
+            val listIdStr = args["list_id"]?.jsonPrimitive?.contentOrNull
+                ?: return@addTool errorResult("list_id is required")
+            val aliasInput = args["alias"]?.jsonPrimitive?.contentOrNull
+
+            logger.info("MCP tool 'set_alias' called with list_id={}, alias='{}'", listIdStr, aliasInput)
+
+            val listId = parseUuid(listIdStr) ?: return@addTool uuidError(listIdStr)
+
+            if (!listRepository.listExists(listId)) {
+                return@addTool errorResult("Shopping list not found: $listIdStr")
+            }
+
+            // Normalize and validate alias
+            val normalizedAlias = aliasInput?.trim()?.lowercase()?.ifBlank { null }
+
+            if (normalizedAlias != null) {
+                val aliasRegex = Regex("^[a-z0-9]([a-z0-9-]*[a-z0-9])?\$")
+                if (!aliasRegex.matches(normalizedAlias) || normalizedAlias.length > 64) {
+                    return@addTool errorResult("Alias must be 1-64 characters, lowercase alphanumeric and hyphens only, cannot start or end with a hyphen")
+                }
+
+                val uuidRegex = Regex("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\$")
+                if (uuidRegex.matches(normalizedAlias)) {
+                    return@addTool errorResult("Alias cannot be in UUID format")
+                }
+
+                if (listRepository.aliasExists(normalizedAlias)) {
+                    val currentList = listRepository.getListWithExpiration(listId)
+                    if (currentList?.alias != normalizedAlias) {
+                        return@addTool errorResult("Alias '$normalizedAlias' is already in use by another list")
+                    }
+                }
+            }
+
+            listRepository.updateAlias(listId, normalizedAlias)
+
+            val message = if (normalizedAlias != null) {
+                "Alias '$normalizedAlias' set for list $listIdStr"
+            } else {
+                "Alias removed from list $listIdStr"
+            }
+
+            CallToolResult(content = listOf(TextContent(text = message)))
         }
     }
 
