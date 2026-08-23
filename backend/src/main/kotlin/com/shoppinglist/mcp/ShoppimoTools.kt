@@ -1,7 +1,10 @@
 package com.shoppinglist.mcp
 
+import com.shoppinglist.models.ListItem
 import com.shoppinglist.repository.ItemRepositoryImpl
 import com.shoppinglist.repository.ListRepositoryImpl
+import com.shoppinglist.websocket.MessageBroadcaster
+import com.shoppinglist.websocket.WebSocketService
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
@@ -19,9 +22,13 @@ object ShoppimoTools {
     private val logger = LoggerFactory.getLogger(ShoppimoTools::class.java)
     private val listRepository = ListRepositoryImpl()
     private val itemRepository = ItemRepositoryImpl()
+    private val json = Json { ignoreUnknownKeys = true }
 
-    fun register(server: Server) {
-        logger.info("Registering MCP tools...")
+    private var broadcaster: MessageBroadcaster? = null
+
+    fun register(server: Server, webSocketService: WebSocketService? = null) {
+        broadcaster = webSocketService?.getMessageBroadcaster()
+        logger.info("Registering MCP tools... (WebSocket broadcasting: {})", broadcaster != null)
         registerCreateList(server)
         registerGetList(server)
         registerGetListByAlias(server)
@@ -200,6 +207,9 @@ object ShoppimoTools {
             val item = itemRepository.createItem(listId, text.trim())
             listRepository.updateListModified(listId)
 
+            // Broadcast to WebSocket clients
+            broadcastItemAdded(listIdStr, item)
+
             CallToolResult(
                 content = listOf(TextContent(text = buildJsonObject {
                     put("id", item.id)
@@ -249,6 +259,9 @@ object ShoppimoTools {
 
             listRepository.updateListModified(listId)
 
+            // Broadcast to WebSocket clients
+            broadcastItemDeleted(listIdStr, itemIdStr)
+
             CallToolResult(content = listOf(TextContent(text = "Item $itemIdStr removed from list $listIdStr")))
         }
     }
@@ -287,6 +300,9 @@ object ShoppimoTools {
                 ?: return@addTool errorResult("Item not found: $itemIdStr")
 
             listRepository.updateListModified(listId)
+
+            // Broadcast to WebSocket clients
+            broadcastItemUpdated(listIdStr, updated)
 
             CallToolResult(content = listOf(TextContent(text = "Item '${updated.text}' checked off in list $listIdStr")))
         }
@@ -327,6 +343,9 @@ object ShoppimoTools {
 
             listRepository.updateListModified(listId)
 
+            // Broadcast to WebSocket clients
+            broadcastItemUpdated(listIdStr, updated)
+
             CallToolResult(content = listOf(TextContent(text = "Item '${updated.text}' unchecked in list $listIdStr")))
         }
     }
@@ -354,6 +373,9 @@ object ShoppimoTools {
 
             val deletedCount = itemRepository.clearCompletedItems(listId)
             listRepository.updateListModified(listId)
+
+            // Broadcast to WebSocket clients
+            broadcastItemsCleared(listIdStr, deletedCount)
 
             CallToolResult(content = listOf(TextContent(text = "Cleared $deletedCount completed item(s) from list $listIdStr")))
         }
@@ -407,4 +429,48 @@ object ShoppimoTools {
     )
 
     private fun uuidError(value: String) = errorResult("Invalid UUID format: $value")
+
+    // --- WebSocket broadcasting helpers ---
+
+    private suspend fun broadcastItemAdded(listId: String, item: ListItem) {
+        try {
+            broadcaster?.let { b ->
+                val itemJson = json.encodeToJsonElement(ListItem.serializer(), item)
+                b.broadcastItemAdded(listId, itemJson)
+                logger.debug("Broadcast item_added for list {}", listId)
+            }
+        } catch (e: Exception) {
+            logger.warn("Error broadcasting item addition via MCP: {}", e.message)
+        }
+    }
+
+    private suspend fun broadcastItemUpdated(listId: String, item: ListItem) {
+        try {
+            broadcaster?.let { b ->
+                val itemJson = json.encodeToJsonElement(ListItem.serializer(), item)
+                b.broadcastItemUpdated(listId, itemJson)
+                logger.debug("Broadcast item_updated for list {}", listId)
+            }
+        } catch (e: Exception) {
+            logger.warn("Error broadcasting item update via MCP: {}", e.message)
+        }
+    }
+
+    private suspend fun broadcastItemDeleted(listId: String, itemId: String) {
+        try {
+            broadcaster?.broadcastItemDeleted(listId, itemId)
+            logger.debug("Broadcast item_deleted for list {}", listId)
+        } catch (e: Exception) {
+            logger.warn("Error broadcasting item deletion via MCP: {}", e.message)
+        }
+    }
+
+    private suspend fun broadcastItemsCleared(listId: String, deletedCount: Int) {
+        try {
+            broadcaster?.broadcastItemsCleared(listId, deletedCount)
+            logger.debug("Broadcast items_cleared for list {}", listId)
+        } catch (e: Exception) {
+            logger.warn("Error broadcasting items cleared via MCP: {}", e.message)
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.shoppinglist.mcp
 
+import com.shoppinglist.websocket.WebSocketService
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
 import io.modelcontextprotocol.kotlin.sdk.types.Implementation
@@ -16,7 +17,7 @@ object McpServerConfig {
     private const val SERVER_NAME = "shoppimo"
     private const val SERVER_VERSION = "5.0.0"
 
-    fun createServer(): Server {
+    fun createServer(webSocketService: WebSocketService? = null): Server {
         logger.info("Creating MCP server instance: $SERVER_NAME v$SERVER_VERSION")
 
         val server = Server(
@@ -36,7 +37,7 @@ object McpServerConfig {
         )
 
         // Register tools and resources
-        ShoppimoTools.register(server)
+        ShoppimoTools.register(server, webSocketService)
         ShoppimoResources.register(server)
 
         logger.info("MCP server configured with {} tools and resource templates", 9)
