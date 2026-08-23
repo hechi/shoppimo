@@ -21,6 +21,7 @@ object ShoppimoTools {
     fun register(server: Server) {
         registerCreateList(server)
         registerGetList(server)
+        registerGetListByAlias(server)
         registerAddItem(server)
         registerRemoveItem(server)
         registerCheckItem(server)
@@ -86,6 +87,51 @@ object ShoppimoTools {
 
             val list = listRepository.getListWithExpiration(listId)
                 ?: return@addTool errorResult("Shopping list not found: $listIdStr")
+
+            CallToolResult(
+                content = listOf(TextContent(text = buildJsonObject {
+                    put("id", list.id)
+                    put("alias", list.alias?.let { JsonPrimitive(it) } ?: JsonNull)
+                    put("createdAt", list.createdAt)
+                    put("lastModified", list.lastModified)
+                    put("expiresAt", list.expiresAt?.let { JsonPrimitive(it) } ?: JsonNull)
+                    put("itemCount", list.items.size)
+                    putJsonArray("items") {
+                        list.items.forEach { item ->
+                            addJsonObject {
+                                put("id", item.id)
+                                put("text", item.text)
+                                put("completed", item.completed)
+                                put("order", item.order)
+                            }
+                        }
+                    }
+                }.toString()))
+            )
+        }
+    }
+
+    private fun registerGetListByAlias(server: Server) {
+        server.addTool(
+            name = "get_list_by_alias",
+            description = "Look up a shopping list by its human-friendly alias (e.g. 'groceries', 'yey'). Returns the list with all items, same as get_list but accepts an alias instead of a UUID.",
+            inputSchema = toolSchema(
+                properties = buildJsonObject {
+                    putJsonObject("alias") {
+                        put("type", "string")
+                        put("description", "The alias of the shopping list (e.g. 'groceries').")
+                    }
+                },
+                required = listOf("alias")
+            )
+        ) { request ->
+            val alias = request.arguments?.get("alias")?.jsonPrimitive?.contentOrNull
+                ?: return@addTool errorResult("alias is required")
+
+            if (alias.isBlank()) return@addTool errorResult("alias cannot be empty")
+
+            val list = listRepository.getListByAlias(alias.trim().lowercase())
+                ?: return@addTool errorResult("No shopping list found with alias: $alias")
 
             CallToolResult(
                 content = listOf(TextContent(text = buildJsonObject {
