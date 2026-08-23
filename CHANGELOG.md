@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **MCP prompts (meal planning)** — Two new MCP prompt templates: `weekly-groceries` populates a list with typical weekly staples scaled to household size, and `suggest-meals` proposes meals for the week and adds only the specific ingredients needed, excluding common pantry essentials (salt, pepper, oil, garlic, etc.) that most people already have at home
+- **MCP batch add_items tool** — New `add_items` tool adds up to 50 items to a shopping list in a single call, enabling efficient bulk operations from AI-driven workflows like meal planning
+- **MCP prompts capability** — The MCP server now advertises the `prompts` capability, allowing AI clients to discover and use the meal planning and grocery templates
 - **MCP server (Model Context Protocol)** — AI assistants can now interact with Shoppimo shopping lists via the standard MCP protocol. The server exposes 8 tools (create_list, get_list, add_item, remove_item, check_item, uncheck_item, clear_completed, delete_list) and a resource template (shoppimo://lists/{listId}) over SSE transport at `/mcp`. Built with the official `io.modelcontextprotocol:kotlin-sdk` v0.15.0
 
 ### Changed

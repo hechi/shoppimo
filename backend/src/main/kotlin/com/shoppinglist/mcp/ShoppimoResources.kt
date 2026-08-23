@@ -25,12 +25,12 @@ object ShoppimoResources {
      */
     private fun registerListResource(server: Server) {
         server.addResourceTemplate(
-            uriTemplate = "shoppimo://lists/{listId}",
+            uriTemplate = "shoppimo://list/{listId}",
             name = "Shopping List",
             description = "Access a shopping list by its UUID. Returns the list metadata and all items.",
             mimeType = "application/json"
         ) { request, variables ->
-            val listIdStr = variables["listId"] ?: request.uri.removePrefix("shoppimo://lists/")
+            val listIdStr = variables["listId"] ?: request.uri.removePrefix("shoppimo://list/")
 
             val listId = try {
                 UUID.fromString(listIdStr)
