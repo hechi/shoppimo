@@ -153,7 +153,9 @@ Shoppimo exposes an MCP server at `/mcp` using SSE transport, allowing AI assist
 | Tool | Description |
 |------|-------------|
 | `create_list` | Create a new shopping list |
-| `get_list` | Retrieve a list with all items |
+| `get_list` | Retrieve a list with all items by UUID |
+| `get_list_by_alias` | Look up a list by its human-friendly alias |
+| `set_alias` | Set, update, or remove a list's alias |
 | `add_item` | Add an item to a list |
 | `remove_item` | Remove an item by ID |
 | `check_item` | Mark an item as completed |
