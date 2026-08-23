@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -208,7 +208,7 @@ class PushSubscriptionRepositoryTest {
 
         pushSubscriptionRepository.incrementFailure(subId)
         var updated = transaction {
-            val result = PushSubscriptions.select {
+            val result = PushSubscriptions.selectAll().where {
                 PushSubscriptions.id eq subId
             }.singleOrNull()
             result?.get(PushSubscriptions.consecutiveFailures) ?: 0
@@ -217,7 +217,7 @@ class PushSubscriptionRepositoryTest {
 
         pushSubscriptionRepository.incrementFailure(subId)
         updated = transaction {
-            val result = PushSubscriptions.select {
+            val result = PushSubscriptions.selectAll().where {
                 PushSubscriptions.id eq subId
             }.singleOrNull()
             result?.get(PushSubscriptions.consecutiveFailures) ?: 0

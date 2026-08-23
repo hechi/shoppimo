@@ -4,17 +4,20 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
+import com.shoppinglist.mcp.McpServerConfig
 import com.shoppinglist.routes.listRoutes
 import com.shoppinglist.routes.pushRoutes
 import com.shoppinglist.models.HealthResponse
 import com.shoppinglist.models.ErrorResponse
+import io.modelcontextprotocol.kotlin.sdk.server.mcp
 
 import com.shoppinglist.repository.PushSubscriptionRepository
 import com.shoppinglist.services.PushNotificationService
 
 fun Application.configureRouting(
     pushRepository: PushSubscriptionRepository? = null,
-    pushNotificationService: PushNotificationService? = null
+    pushNotificationService: PushNotificationService? = null,
+    enableMcp: Boolean = false
 ) {
     routing {
         get("/") {
@@ -58,6 +61,14 @@ fun Application.configureRouting(
                 pushRoutes(pushRepository)
             }
             listRoutes(pushNotificationService)
+        }
+
+        // MCP (Model Context Protocol) endpoint for AI assistant integration
+        // Accessible via SSE transport at /mcp
+        if (enableMcp) {
+            route("/mcp") {
+                mcp { McpServerConfig.createServer() }
+            }
         }
     }
 }

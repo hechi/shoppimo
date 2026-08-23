@@ -6,12 +6,12 @@ import io.ktor.server.websocket.*
 import io.ktor.websocket.*
 import io.ktor.util.*
 import com.shoppinglist.websocket.WebSocketService
-import java.time.Duration
+import kotlin.time.Duration.Companion.seconds
 
 fun Application.configureWebSockets() {
     install(WebSockets) {
-        pingPeriod = Duration.ofSeconds(15)
-        timeout = Duration.ofSeconds(15)
+        pingPeriod = 15.seconds
+        timeout = 15.seconds
         maxFrameSize = Long.MAX_VALUE
         masking = false
     }

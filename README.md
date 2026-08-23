@@ -19,6 +19,7 @@ A real-time collaborative shopping list app. Create a list, share the link, and 
 - **Smart Autocomplete** — Suggests items from your cross-list history as you type
 - **Push Notifications** — Opt-in Web Push alerts when list changes happen
 - **List Aliases** — Optionally assign a human-friendly alias (e.g. `groceries`) to any list, usable in place of the UUID
+- **MCP Server** — AI assistants can manage shopping lists via the [Model Context Protocol](https://modelcontextprotocol.io) (SSE transport at `/mcp`)
 - **Prometheus Metrics** — Application metrics (online users, list count, JVM, HTTP requests) exposed for Prometheus scraping
 
 ## Tech Stack
@@ -141,6 +142,44 @@ For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 | `GET` | `/api/push/vapid-key` | Get the server's VAPID public key |
 | `POST` | `/api/push/subscribe` | Subscribe to push notifications |
 | `POST` | `/api/push/unsubscribe` | Unsubscribe from push notifications |
+| `SSE` | `/mcp` | Model Context Protocol endpoint (AI integration) |
+
+## MCP (Model Context Protocol)
+
+Shoppimo exposes an MCP server at `/mcp` using SSE transport, allowing AI assistants (Claude, Kiro, Copilot, etc.) to manage shopping lists programmatically.
+
+### Available Tools
+
+| Tool | Description |
+|------|-------------|
+| `create_list` | Create a new shopping list |
+| `get_list` | Retrieve a list with all items |
+| `add_item` | Add an item to a list |
+| `remove_item` | Remove an item by ID |
+| `check_item` | Mark an item as completed |
+| `uncheck_item` | Mark an item as not completed |
+| `clear_completed` | Remove all completed items |
+| `delete_list` | Permanently delete a list |
+
+### Resources
+
+| URI Pattern | Description |
+|-------------|-------------|
+| `shoppimo://lists/{listId}` | Read-only access to a shopping list and its items |
+
+### Connecting an AI Client
+
+Point your MCP client at `http://localhost:8080/mcp` (SSE transport). Example configuration for Claude Desktop or Kiro:
+
+```json
+{
+  "mcpServers": {
+    "shoppimo": {
+      "url": "http://localhost:8080/mcp"
+    }
+  }
+}
+```
 
 ## Contributing
 

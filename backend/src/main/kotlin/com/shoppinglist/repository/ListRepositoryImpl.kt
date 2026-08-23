@@ -31,11 +31,11 @@ class ListRepositoryImpl : ListRepository {
     }
     
     override suspend fun getListById(id: UUID): ShoppingList? = newSuspendedTransaction {
-        val listRow = ShoppingLists.select { ShoppingLists.id eq id }.singleOrNull()
+        val listRow = ShoppingLists.selectAll().where { ShoppingLists.id eq id }.singleOrNull()
             ?: return@newSuspendedTransaction null
         
         val items = (ShoppingLists innerJoin ListItems)
-            .select { ShoppingLists.id eq id }
+            .selectAll().where { ShoppingLists.id eq id }
             .orderBy(ListItems.itemOrder)
             .map { row ->
                 ListItem(
@@ -70,15 +70,15 @@ class ListRepositoryImpl : ListRepository {
     }
     
     override suspend fun listExists(id: UUID): Boolean = newSuspendedTransaction {
-        ShoppingLists.select { ShoppingLists.id eq id }.count() > 0
+        ShoppingLists.selectAll().where { ShoppingLists.id eq id }.count() > 0
     }
     
     override suspend fun getListWithExpiration(id: UUID): ShoppingList? = newSuspendedTransaction {
-        val listRow = ShoppingLists.select { ShoppingLists.id eq id }.singleOrNull()
+        val listRow = ShoppingLists.selectAll().where { ShoppingLists.id eq id }.singleOrNull()
             ?: return@newSuspendedTransaction null
         
         val items = ListItems
-            .select { ListItems.listId eq id }
+            .selectAll().where { ListItems.listId eq id }
             .orderBy(ListItems.itemOrder)
             .map { row ->
                 ListItem(
@@ -109,13 +109,13 @@ class ListRepositoryImpl : ListRepository {
     override suspend fun getListByAlias(alias: String): ShoppingList? = newSuspendedTransaction {
         val normalizedAlias = alias.trim().lowercase()
         
-        val listRow = ShoppingLists.select { ShoppingLists.alias eq normalizedAlias }.singleOrNull()
+        val listRow = ShoppingLists.selectAll().where { ShoppingLists.alias eq normalizedAlias }.singleOrNull()
             ?: return@newSuspendedTransaction null
         
         val listId = listRow[ShoppingLists.id].value
         
         val items = ListItems
-            .select { ListItems.listId eq listId }
+            .selectAll().where { ListItems.listId eq listId }
             .orderBy(ListItems.itemOrder)
             .map { row ->
                 ListItem(
@@ -154,6 +154,6 @@ class ListRepositoryImpl : ListRepository {
     
     override suspend fun aliasExists(alias: String): Boolean = newSuspendedTransaction {
         val normalizedAlias = alias.trim().lowercase()
-        ShoppingLists.select { ShoppingLists.alias eq normalizedAlias }.count() > 0
+        ShoppingLists.selectAll().where { ShoppingLists.alias eq normalizedAlias }.count() > 0
     }
 }

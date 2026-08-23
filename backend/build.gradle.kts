@@ -6,9 +6,9 @@ val hikaricp_version: String by project
 val postgresql_version: String by project
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    id("io.ktor.plugin") version "2.3.13"
-    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.25"
+    kotlin("jvm") version "2.3.21"
+    id("io.ktor.plugin") version "3.5.1"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.21"
 }
 
 java {
@@ -31,24 +31,17 @@ repositories {
     mavenCentral()
 }
 
-configurations.all {
-    resolutionStrategy {
-        force("org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version")
-        force("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version")
-        force("org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version")
-        force("org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version")
-    }
-}
-
 dependencies {
-    implementation("io.ktor:ktor-server-core-jvm")
-    implementation("io.ktor:ktor-server-websockets-jvm")
-    implementation("io.ktor:ktor-server-content-negotiation-jvm")
-    implementation("io.ktor:ktor-serialization-kotlinx-json-jvm")
-    implementation("io.ktor:ktor-server-cors-jvm")
-    implementation("io.ktor:ktor-server-netty-jvm")
+    // Ktor Server
+    implementation("io.ktor:ktor-server-core")
+    implementation("io.ktor:ktor-server-websockets")
+    implementation("io.ktor:ktor-server-content-negotiation")
+    implementation("io.ktor:ktor-serialization-kotlinx-json")
+    implementation("io.ktor:ktor-server-cors")
+    implementation("io.ktor:ktor-server-netty")
     implementation("io.ktor:ktor-server-config-yaml")
-    
+    implementation("io.ktor:ktor-server-sse")
+
     // Database
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
@@ -56,33 +49,29 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
     implementation("org.postgresql:postgresql:$postgresql_version")
-    
+
+    // MCP (Model Context Protocol)
+    implementation("io.modelcontextprotocol:kotlin-sdk:0.15.0")
+
     // Metrics
     implementation("io.ktor:ktor-server-metrics-micrometer")
     implementation("io.micrometer:micrometer-registry-prometheus:1.17.0")
-    
+
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
-    
+
     // Push notifications
     implementation("com.interaso:webpush:1.3.0")
-    
+
     // Testing
-    testImplementation("io.ktor:ktor-server-tests-jvm")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
-    testImplementation("io.ktor:ktor-server-test-host-jvm")
+    testImplementation("io.ktor:ktor-server-test-host")
+    testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
     testImplementation("org.testcontainers:testcontainers:1.21.4")
     testImplementation("org.testcontainers:postgresql:1.21.4")
     testImplementation("org.testcontainers:junit-jupiter:1.21.4")
     testImplementation("org.junit.jupiter:junit-jupiter:5.14.4")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.4")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
-}
-
-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-    kotlinOptions {
-        freeCompilerArgs = freeCompilerArgs + "-Xskip-metadata-version-check"
-    }
 }
 
 tasks.test {
