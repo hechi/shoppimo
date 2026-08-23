@@ -19,7 +19,7 @@ A real-time collaborative shopping list app. Create a list, share the link, and 
 - **Smart Autocomplete** — Suggests items from your cross-list history as you type
 - **Push Notifications** — Opt-in Web Push alerts when list changes happen
 - **List Aliases** — Optionally assign a human-friendly alias (e.g. `groceries`) to any list, usable in place of the UUID
-- **MCP Server** — AI assistants can manage shopping lists via the [Model Context Protocol](https://modelcontextprotocol.io) (SSE transport at `/mcp`)
+- **MCP Server** — AI assistants can manage shopping lists via the [Model Context Protocol](https://modelcontextprotocol.io) — includes meal planning prompts and batch operations ([setup guide](MCP_INSTALL.md))
 - **Prometheus Metrics** — Application metrics (online users, list count, JVM, HTTP requests) exposed for Prometheus scraping
 
 ## Tech Stack
@@ -148,6 +148,10 @@ For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 
 Shoppimo exposes an MCP server at `/mcp` using SSE transport, allowing AI assistants (Claude, Kiro, Copilot, etc.) to manage shopping lists programmatically.
 
+**Production endpoint:** `https://api.shoppimo.de/mcp`
+
+> **Quick setup:** See [MCP_INSTALL.md](MCP_INSTALL.md) for one-command install instructions for Claude Code, Claude Desktop, Cursor, VS Code, Kiro, ChatGPT, and other clients.
+
 ### Available Tools
 
 | Tool | Description |
@@ -156,32 +160,37 @@ Shoppimo exposes an MCP server at `/mcp` using SSE transport, allowing AI assist
 | `get_list` | Retrieve a list with all items by UUID |
 | `get_list_by_alias` | Look up a list by its human-friendly alias |
 | `set_alias` | Set, update, or remove a list's alias |
-| `add_item` | Add an item to a list |
+| `add_item` | Add a single item to a list |
+| `add_items` | Add multiple items in batch (up to 50) |
 | `remove_item` | Remove an item by ID |
 | `check_item` | Mark an item as completed |
 | `uncheck_item` | Mark an item as not completed |
 | `clear_completed` | Remove all completed items |
 | `delete_list` | Permanently delete a list |
 
+### Prompts
+
+| Prompt | Description |
+|--------|-------------|
+| `weekly-groceries` | Populate a list with typical weekly staples, scaled to household size |
+| `suggest-meals` | Suggest meals for the week and add ingredients (excludes pantry basics like salt, pepper, oil) |
+
 ### Resources
 
 | URI Pattern | Description |
 |-------------|-------------|
-| `shoppimo://lists/{listId}` | Read-only access to a shopping list and its items |
+| `shoppimo://list/{listId}` | Read-only access to a shopping list and its items |
 
 ### Connecting an AI Client
 
-Point your MCP client at `http://localhost:8080/mcp` (SSE transport). Example configuration for Claude Desktop or Kiro:
+Point your MCP client at `https://api.shoppimo.de/mcp` (or `http://localhost:8080/mcp` for local dev).
 
-```json
-{
-  "mcpServers": {
-    "shoppimo": {
-      "url": "http://localhost:8080/mcp"
-    }
-  }
-}
+```bash
+# Claude Code — one command:
+claude mcp add --transport http shoppimo https://api.shoppimo.de/mcp
 ```
+
+For other clients, see [MCP_INSTALL.md](MCP_INSTALL.md).
 
 ### Testing with curl
 
