@@ -7,6 +7,7 @@ import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
 import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
 import kotlinx.serialization.json.*
+import org.slf4j.LoggerFactory
 import java.util.*
 
 /**
@@ -15,10 +16,12 @@ import java.util.*
  */
 object ShoppimoTools {
 
+    private val logger = LoggerFactory.getLogger(ShoppimoTools::class.java)
     private val listRepository = ListRepositoryImpl()
     private val itemRepository = ItemRepositoryImpl()
 
     fun register(server: Server) {
+        logger.info("Registering MCP tools...")
         registerCreateList(server)
         registerGetList(server)
         registerGetListByAlias(server)
@@ -28,6 +31,7 @@ object ShoppimoTools {
         registerUncheckItem(server)
         registerClearCompleted(server)
         registerDeleteList(server)
+        logger.info("All MCP tools registered successfully")
     }
 
     private fun registerCreateList(server: Server) {
@@ -43,6 +47,7 @@ object ShoppimoTools {
                 }
             )
         ) { request ->
+            logger.info("MCP tool 'create_list' called with args: {}", request.arguments)
             val args = request.arguments
             val id = args?.get("id")?.jsonPrimitive?.contentOrNull?.let {
                 try {
@@ -80,6 +85,7 @@ object ShoppimoTools {
                 required = listOf("list_id")
             )
         ) { request ->
+            logger.info("MCP tool 'get_list' called with args: {}", request.arguments)
             val listIdStr = request.arguments?.get("list_id")?.jsonPrimitive?.contentOrNull
                 ?: return@addTool errorResult("list_id is required")
 
@@ -127,6 +133,8 @@ object ShoppimoTools {
         ) { request ->
             val alias = request.arguments?.get("alias")?.jsonPrimitive?.contentOrNull
                 ?: return@addTool errorResult("alias is required")
+
+            logger.info("MCP tool 'get_list_by_alias' called with alias='{}'", alias)
 
             if (alias.isBlank()) return@addTool errorResult("alias cannot be empty")
 
