@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.2.0] - 2026-08-23
+
 ### Added
 - **MCP install guide** — New [MCP_INSTALL.md](MCP_INSTALL.md) with one-command setup instructions for Claude Code, Claude Desktop, Cursor, VS Code, Windsurf, Kiro, ChatGPT, and generic MCP clients
 - **MCP prompts (meal planning)** — Two new MCP prompt templates: `weekly-groceries` populates a list with typical weekly staples scaled to household size, and `suggest-meals` proposes meals for the week and adds only the specific ingredients needed, excluding common pantry essentials (salt, pepper, oil, garlic, etc.) that most people already have at home
@@ -172,7 +174,8 @@ Re-tagged release of v7.0.0 with no additional changes.
 
 ---
 
-[Unreleased]: https://github.com/hechi/shoppimo/compare/v7.1.0...HEAD
+[Unreleased]: https://github.com/hechi/shoppimo/compare/v7.2.0...HEAD
+[7.2.0]: https://github.com/hechi/shoppimo/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/hechi/shoppimo/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/hechi/shoppimo/compare/v6.4.0...v7.0.0
 [6.4.0]: https://github.com/hechi/shoppimo/compare/v6.3.2...v6.4.0
