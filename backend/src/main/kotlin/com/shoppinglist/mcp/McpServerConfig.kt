@@ -31,7 +31,8 @@ object McpServerConfig {
                     resources = ServerCapabilities.Resources(
                         subscribe = false,
                         listChanged = true
-                    )
+                    ),
+                    prompts = ServerCapabilities.Prompts(listChanged = true)
                 )
             )
         )
@@ -39,8 +40,9 @@ object McpServerConfig {
         // Register tools and resources
         ShoppimoTools.register(server, webSocketService)
         ShoppimoResources.register(server)
+        ShoppimoPrompts.register(server)
 
-        logger.info("MCP server configured with {} tools and resource templates", 9)
+        logger.info("MCP server configured with {} tools, resource templates, and prompts", 11)
         return server
     }
 }

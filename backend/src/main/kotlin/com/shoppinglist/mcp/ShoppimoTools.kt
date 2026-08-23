@@ -39,6 +39,7 @@ object ShoppimoTools {
         registerUncheckItem(server)
         registerClearCompleted(server)
         registerDeleteList(server)
+        registerAddItems(server)
         logger.info("All MCP tools registered successfully")
     }
 
@@ -471,6 +472,79 @@ object ShoppimoTools {
             if (!deleted) return@addTool errorResult("Shopping list not found: $listIdStr")
 
             CallToolResult(content = listOf(TextContent(text = "Shopping list $listIdStr deleted permanently")))
+        }
+    }
+
+    private fun registerAddItems(server: Server) {
+        server.addTool(
+            name = "add_items",
+            description = "Add multiple items to a shopping list in a single batch operation. More efficient than calling add_item repeatedly.",
+            inputSchema = toolSchema(
+                properties = buildJsonObject {
+                    putJsonObject("list_id") {
+                        put("type", "string")
+                        put("description", "The UUID of the shopping list.")
+                    }
+                    putJsonObject("items") {
+                        put("type", "array")
+                        put("description", "Array of item texts to add to the list.")
+                        putJsonObject("items") {
+                            put("type", "string")
+                        }
+                    }
+                },
+                required = listOf("list_id", "items")
+            )
+        ) { request ->
+            val args = request.arguments ?: return@addTool errorResult("Arguments required")
+
+            val listIdStr = args["list_id"]?.jsonPrimitive?.contentOrNull
+                ?: return@addTool errorResult("list_id is required")
+            val itemsArray = args["items"]?.jsonArray
+                ?: return@addTool errorResult("items is required and must be an array")
+
+            if (itemsArray.isEmpty()) return@addTool errorResult("items array cannot be empty")
+            if (itemsArray.size > 50) return@addTool errorResult("Cannot add more than 50 items at once")
+
+            val listId = parseUuid(listIdStr) ?: return@addTool uuidError(listIdStr)
+
+            if (!listRepository.listExists(listId)) {
+                return@addTool errorResult("Shopping list not found: $listIdStr")
+            }
+
+            val addedItems = mutableListOf<ListItem>()
+            val errors = mutableListOf<String>()
+
+            for (element in itemsArray) {
+                val text = element.jsonPrimitive.contentOrNull?.trim()
+                if (text.isNullOrBlank()) {
+                    errors.add("Skipped empty item")
+                    continue
+                }
+                val item = itemRepository.createItem(listId, text)
+                addedItems.add(item)
+                broadcastItemAdded(listIdStr, item)
+            }
+
+            listRepository.updateListModified(listId)
+
+            CallToolResult(
+                content = listOf(TextContent(text = buildJsonObject {
+                    put("added", addedItems.size)
+                    put("skipped", errors.size)
+                    put("list_id", listIdStr)
+                    putJsonArray("items") {
+                        addedItems.forEach { item ->
+                            addJsonObject {
+                                put("id", item.id)
+                                put("text", item.text)
+                                put("order", item.order)
+                            }
+                        }
+                    }
+                    put("message", "Added ${addedItems.size} item(s) to list $listIdStr")
+                }.toString()))
+            )
         }
     }
 
