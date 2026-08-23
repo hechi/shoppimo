@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- **MCP server (Model Context Protocol)** — AI assistants can now interact with Shoppimo shopping lists via the standard MCP protocol. The server exposes 8 tools (create_list, get_list, add_item, remove_item, check_item, uncheck_item, clear_completed, delete_list) and a resource template (shoppimo://lists/{listId}) over SSE transport at `/mcp`. Built with the official `io.modelcontextprotocol:kotlin-sdk` v0.15.0
+
+### Changed
+- **Backend stack upgrade** — Upgraded backend from Kotlin 1.9.25 / Ktor 2.3.13 / Exposed 0.44.1 / Gradle 8.7 to Kotlin 2.3.21 / Ktor 3.5.1 / Exposed 0.60.0 / Gradle 8.11.1. This is a major infrastructure upgrade required for MCP SDK compatibility
+
+### Added
 - **List alias** — Optional human-friendly alias (e.g. `groceries`) for shopping lists, usable in place of the UUID; aliases are unique among active lists, normalized to lowercase, and deleted automatically when the list expires. New endpoints: `GET /api/lists/by-alias/{alias}` to resolve an alias, `PUT /api/lists/{id}/alias` to set, update, or remove it. Small settings UI in the burger menu for managing the alias per list.
 - **AGENTS.md** — AI coding agent instructions covering project overview, tech stack, exact commands, coding conventions, development lifecycle (branch-per-change, Conventional Commits, CHANGELOG discipline), PR workflow, and three-tier boundaries (always/ask/never)
 

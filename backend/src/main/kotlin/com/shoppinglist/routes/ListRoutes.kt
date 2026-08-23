@@ -34,14 +34,19 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
         // POST /api/lists - Create new shopping list
         post {
             try {
-                val request = try {
-                    call.receiveNullable<CreateShoppingListRequest>()
-                } catch (e: Exception) {
-                    call.respond(
-                        HttpStatusCode.BadRequest,
-                        ErrorResponse("invalid_request", "Invalid request body")
-                    )
-                    return@post
+                val bodyText = call.receiveText()
+                val request = if (bodyText.isBlank() || bodyText == "{}") {
+                    null
+                } else {
+                    try {
+                        json.decodeFromString<CreateShoppingListRequest>(bodyText)
+                    } catch (e: Exception) {
+                        call.respond(
+                            HttpStatusCode.BadRequest,
+                            ErrorResponse("invalid_request", "Invalid request body")
+                        )
+                        return@post
+                    }
                 }
                 val listId = if (request?.id != null) {
                     try {

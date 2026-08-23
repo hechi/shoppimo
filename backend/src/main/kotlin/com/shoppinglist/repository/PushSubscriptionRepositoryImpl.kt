@@ -4,6 +4,7 @@ import com.shoppinglist.database.PushSubscriptions
 import com.shoppinglist.models.PushSubscription
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import java.time.Instant
 import java.util.*
@@ -17,7 +18,7 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
         auth: String,
         deviceId: String
     ): PushSubscription = newSuspendedTransaction {
-        val existing = PushSubscriptions.select {
+        val existing = PushSubscriptions.selectAll().where {
             (PushSubscriptions.endpoint eq endpoint) and (PushSubscriptions.listId eq listId)
         }.singleOrNull()
 
@@ -76,7 +77,7 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
     }
 
     override suspend fun getSubscriptionsForList(listId: UUID): List<PushSubscription> = newSuspendedTransaction {
-        PushSubscriptions.select { PushSubscriptions.listId eq listId }
+        PushSubscriptions.selectAll().where { PushSubscriptions.listId eq listId }
             .map { row ->
                 PushSubscription(
                     id = row[PushSubscriptions.id].toString(),
@@ -95,7 +96,7 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
         listId: UUID,
         deviceId: String
     ): List<PushSubscription> = newSuspendedTransaction {
-        PushSubscriptions.select {
+        PushSubscriptions.selectAll().where {
             (PushSubscriptions.listId eq listId) and (PushSubscriptions.deviceId neq deviceId)
         }
             .map { row ->
@@ -114,7 +115,7 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
 
     override suspend fun incrementFailure(subscriptionId: UUID): Boolean = newSuspendedTransaction {
         val currentValue = PushSubscriptions
-            .select { PushSubscriptions.id eq subscriptionId }
+            .selectAll().where { PushSubscriptions.id eq subscriptionId }
             .map { it[PushSubscriptions.consecutiveFailures] }
             .singleOrNull() ?: 0
         
@@ -130,14 +131,8 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
     }
 
     override suspend fun deleteStaleSubscriptions(maxFailures: Int): Int = newSuspendedTransaction {
-        val allSubs = PushSubscriptions.selectAll().toList()
-        var deleted = 0
-        for (row in allSubs) {
-            if (row[PushSubscriptions.consecutiveFailures] > maxFailures) {
-                val id = row[PushSubscriptions.id]
-                deleted += PushSubscriptions.deleteWhere { PushSubscriptions.id eq id }
-            }
+        PushSubscriptions.deleteWhere {
+            PushSubscriptions.consecutiveFailures greater maxFailures
         }
-        deleted
     }
 }

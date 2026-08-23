@@ -5,6 +5,7 @@ import com.shoppinglist.database.ListItems
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 import org.slf4j.LoggerFactory
 import java.time.Instant
@@ -53,7 +54,7 @@ class CleanupService(private val retentionDays: Long? = null) {
         return newSuspendedTransaction {
             // Find lists that haven't been modified for the retention period
             val expiredLists = ShoppingLists
-                .select { ShoppingLists.lastModified less cutoffTime }
+                .selectAll().where { ShoppingLists.lastModified less cutoffTime }
                 .map { it[ShoppingLists.id] }
             
             if (expiredLists.isEmpty()) {
@@ -82,7 +83,7 @@ class CleanupService(private val retentionDays: Long? = null) {
     suspend fun getListExpirationDate(listId: UUID): Instant? {
         return newSuspendedTransaction {
             ShoppingLists
-                .select { ShoppingLists.id eq listId }
+                .selectAll().where { ShoppingLists.id eq listId }
                 .singleOrNull()
                 ?.let { row ->
                     val lastModified = row[ShoppingLists.lastModified]

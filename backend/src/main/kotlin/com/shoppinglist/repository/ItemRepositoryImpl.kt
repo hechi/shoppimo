@@ -40,7 +40,7 @@ class ItemRepositoryImpl : ItemRepository {
     }
     
     override suspend fun getItemById(itemId: UUID): ListItem? = newSuspendedTransaction {
-        ListItems.select { ListItems.id eq itemId }
+        ListItems.selectAll().where { ListItems.id eq itemId }
             .singleOrNull()
             ?.let { row ->
                 ListItem(
@@ -54,7 +54,7 @@ class ItemRepositoryImpl : ItemRepository {
     }
     
     override suspend fun getItemsByListId(listId: UUID): List<ListItem> = newSuspendedTransaction {
-        ListItems.select { ListItems.listId eq listId }
+        ListItems.selectAll().where { ListItems.listId eq listId }
             .orderBy(ListItems.itemOrder)
             .map { row ->
                 ListItem(
@@ -69,7 +69,7 @@ class ItemRepositoryImpl : ItemRepository {
     
     override suspend fun updateItem(itemId: UUID, text: String?, completed: Boolean?): ListItem? = newSuspendedTransaction {
         // First get the current item to get the listId
-        val currentItem = ListItems.select { ListItems.id eq itemId }.singleOrNull()
+        val currentItem = ListItems.selectAll().where { ListItems.id eq itemId }.singleOrNull()
             ?: return@newSuspendedTransaction null
         
         val listId = currentItem[ListItems.listId]
@@ -87,7 +87,7 @@ class ItemRepositoryImpl : ItemRepository {
         }
         
         // Return updated item directly from the same transaction
-        ListItems.select { ListItems.id eq itemId }
+        ListItems.selectAll().where { ListItems.id eq itemId }
             .singleOrNull()
             ?.let { row ->
                 ListItem(
@@ -102,7 +102,7 @@ class ItemRepositoryImpl : ItemRepository {
     
     override suspend fun deleteItem(itemId: UUID): Boolean = newSuspendedTransaction {
         // First get the listId to update parent list
-        val item = ListItems.select { ListItems.id eq itemId }.singleOrNull()
+        val item = ListItems.selectAll().where { ListItems.id eq itemId }.singleOrNull()
             ?: return@newSuspendedTransaction false
         
         val listId = item[ListItems.listId]
@@ -141,10 +141,8 @@ class ItemRepositoryImpl : ItemRepository {
     
     override suspend fun getNextOrderForList(listId: UUID): Int = newSuspendedTransaction {
         val maxOrder = ListItems
-            .slice(ListItems.itemOrder.max())
-            .select { ListItems.listId eq listId }
-            .singleOrNull()
-            ?.get(ListItems.itemOrder.max())
+            .selectAll().where { ListItems.listId eq listId }
+            .maxOfOrNull { it[ListItems.itemOrder] }
         
         (maxOrder ?: 0) + 1
     }

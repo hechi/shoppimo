@@ -3,6 +3,7 @@ package com.shoppinglist
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import io.ktor.server.sse.*
 import com.shoppinglist.plugins.*
 import com.shoppinglist.database.DatabaseFactory
 import com.shoppinglist.repository.PushSubscriptionRepositoryImpl
@@ -21,6 +22,7 @@ fun Application.module() {
     configureSerialization()
     configureCORS()
     configureMetrics()
+    install(SSE)
 
     val pushRepository = PushSubscriptionRepositoryImpl()
     val pushService = runCatching {
@@ -29,14 +31,15 @@ fun Application.module() {
 
     configureRouting(
         pushRepository = pushRepository,
-        pushNotificationService = pushService
+        pushNotificationService = pushService,
+        enableMcp = true
     )
     configureWebSockets()
     
     val cleanupService = CleanupService()
     cleanupService.startCleanupScheduler()
     
-    environment.monitor.subscribe(ApplicationStopped) {
+    monitor.subscribe(ApplicationStopped) {
         cleanupService.stopCleanupScheduler()
     }
 }
