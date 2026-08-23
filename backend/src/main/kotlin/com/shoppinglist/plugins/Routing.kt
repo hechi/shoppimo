@@ -65,9 +65,10 @@ fun Application.configureRouting(
 
         // MCP (Model Context Protocol) endpoint for AI assistant integration
         // Accessible via SSE transport at /mcp
+        // DNS rebinding protection disabled since Shoppimo is designed for LAN access
         if (enableMcp) {
             route("/mcp") {
-                mcp { McpServerConfig.createServer() }
+                mcp(enableDnsRebindingProtection = false) { McpServerConfig.createServer() }
             }
         }
     }
