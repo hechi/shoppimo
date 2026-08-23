@@ -68,7 +68,11 @@ fun Application.configureRouting(
         // DNS rebinding protection disabled since Shoppimo is designed for LAN access
         if (enableMcp) {
             route("/mcp") {
-                mcp(enableDnsRebindingProtection = false) { McpServerConfig.createServer() }
+                mcp(enableDnsRebindingProtection = false) {
+                    // Resolve WebSocket service lazily (set after configureWebSockets runs)
+                    val wsService = call.application.attributes.getOrNull(WebSocketServiceKey)
+                    McpServerConfig.createServer(wsService)
+                }
             }
         }
     }
