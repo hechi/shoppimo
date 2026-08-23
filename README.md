@@ -181,6 +181,17 @@ Point your MCP client at `http://localhost:8080/mcp` (SSE transport). Example co
 }
 ```
 
+### Testing with curl
+
+The SSE transport serves both the event stream and the POST endpoint at the same path (`/mcp`):
+
+```bash
+# Open the SSE stream (responses appear here)
+curl -N -H "Accept: text/event-stream" http://localhost:8080/mcp
+```
+
+For LAN access, use your machine's IP (e.g. `http://192.168.x.x:8080/mcp`).
+
 ## Contributing
 
 Contributions are welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
