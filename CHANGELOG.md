@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - **Database migrations with Flyway** — The database schema is now managed by versioned SQL migrations that run at startup, instead of being created implicitly by the ORM. Existing databases are upgraded automatically and keep their data. Future schema changes are explicit and reviewable
+- **Logback 1.6.8 and Gradle 10 readiness** — The logging library was upgraded from 1.5.38 to 1.6.8, and the Gradle build script no longer uses syntax that Gradle 10 will remove. No change in behavior for users
 - **Ktor 3.6.1** — The backend framework was upgraded from 3.5.1 to 3.6.1. No change in behavior for users
 - **Kotlin 2.4.21 and backend dependencies** — The backend was upgraded from Kotlin 2.3.21 to 2.4.21, together with the MCP SDK (0.15.0 to 0.16.0), Micrometer (1.17.0 to 1.18.0) and the PostgreSQL driver (42.7.13 to 42.7.14). No change in behavior for users
 - **Major backend dependency upgrades** — Exposed 0.60.0 to 1.6.1, HikariCP 5.1.0 to 7.1.0, Gradle 8.11.1 to 9.9.2, and the test tools Testcontainers 1.21.4 to 2.0.5, JUnit 5.14.4 to 6.1.3 and mockito-kotlin 5.4.0 to 6.4.0. No change in behavior for users

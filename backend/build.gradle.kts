@@ -1,10 +1,10 @@
-val ktor_version: String by project
-val kotlin_version: String by project
-val logback_version: String by project
-val exposed_version: String by project
-val hikaricp_version: String by project
-val postgresql_version: String by project
-val flyway_version: String by project
+val ktor_version = project.property("ktor_version") as String
+val kotlin_version = project.property("kotlin_version") as String
+val logback_version = project.property("logback_version") as String
+val exposed_version = project.property("exposed_version") as String
+val hikaricp_version = project.property("hikaricp_version") as String
+val postgresql_version = project.property("postgresql_version") as String
+val flyway_version = project.property("flyway_version") as String
 
 plugins {
     kotlin("jvm") version "2.4.21"
