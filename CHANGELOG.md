@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- **Frontend dependency upgrades** — React 18 to 19, React Router 6 to 7, i18next 25 to 27 (react-i18next 16 to 18), Vite 5 to 8, Tailwind CSS 3 to 4, TypeScript 5.9 to 6.0, ESLint 8 to 10 (new flat config), Vitest 4 to 5, Cypress 15 to 16, jsdom 27 to 31 and Testing Library jest-dom 6 to 8. The look and behavior of the app stay the same. CI now uses Node.js 24, the version the Docker images already use
 - **Database migrations with Flyway** — The database schema is now managed by versioned SQL migrations that run at startup, instead of being created implicitly by the ORM. Existing databases are upgraded automatically and keep their data. Future schema changes are explicit and reviewable
 - **Logback 1.6.8 and Gradle 10 readiness** — The logging library was upgraded from 1.5.38 to 1.6.8, and the Gradle build script no longer uses syntax that Gradle 10 will remove. No change in behavior for users
 - **Ktor 3.6.1** — The backend framework was upgraded from 3.5.1 to 3.6.1. No change in behavior for users

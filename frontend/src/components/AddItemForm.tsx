@@ -96,7 +96,7 @@ const AddItemForm = () => {
             onBlur={handleBlur}
             onMouseDown={handleInputMouseDown}
             placeholder={t('placeholders.addNewItem')}
-            className={`w-full px-4 py-3 md:px-3.5 md:py-2.5 bg-white dark:bg-gray-700/80 text-gray-900 dark:text-gray-100 border rounded-xl focus:outline-none focus:ring-2 transition-all text-base md:text-sm shadow-sm ${
+            className={`w-full px-4 py-3 md:px-3.5 md:py-2.5 bg-white dark:bg-gray-700/80 text-gray-900 dark:text-gray-100 border rounded-xl focus:outline-hidden focus:ring-2 transition-all text-base md:text-sm shadow-xs ${
               error 
                 ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500' 
                 : 'border-gray-300 dark:border-gray-600 focus:ring-blue-500 focus:border-transparent'
@@ -116,7 +116,7 @@ const AddItemForm = () => {
         <button
           type="submit"
           disabled={!text.trim() || isSubmitting}
-          className="px-5 py-3 md:px-4 md:py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 disabled:from-gray-400 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-600 text-white font-semibold rounded-xl shadow-sm hover:shadow-lift disabled:shadow-none transition-all flex items-center gap-2 text-base md:text-sm"
+          className="px-5 py-3 md:px-4 md:py-2.5 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 active:from-blue-800 active:to-blue-900 disabled:from-gray-400 disabled:to-gray-400 dark:disabled:from-gray-600 dark:disabled:to-gray-600 text-white font-semibold rounded-xl shadow-xs hover:shadow-lift disabled:shadow-none transition-all flex items-center gap-2 text-base md:text-sm"
           data-testid="add-item-button"
         >
           {isSubmitting && (

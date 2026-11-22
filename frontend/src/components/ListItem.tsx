@@ -202,7 +202,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
                 onChange={(e) => setEditText(e.target.value)}
                 onBlur={handleSave}
                 onKeyDown={handleKeyPress}
-                className="flex-1 min-w-0 px-3 py-2 md:px-2 md:py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
+                className="flex-1 min-w-0 px-3 py-2 md:px-2 md:py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
                 autoFocus
                 disabled={isUpdating}
               />
@@ -218,7 +218,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
                   ? 'text-gray-500 dark:text-gray-500 cursor-not-allowed'
                   : item.completed
                     ? 'line-through text-gray-500 dark:text-gray-500 cursor-pointer'
-                    : 'text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-950 px-2 rounded'
+                    : 'text-gray-900 dark:text-gray-100 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-950 px-2 rounded-sm'
               }`}
               title={
                 isTemporary
@@ -237,14 +237,14 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
             <div className="flex items-center gap-1">
               <button
                 onClick={() => { setShowDeleteConfirm(false); onDelete(item.id); }}
-                className="px-2 py-1 bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 text-white text-xs rounded transition-colors"
+                className="px-2 py-1 bg-red-600 dark:bg-red-500 hover:bg-red-700 dark:hover:bg-red-600 text-white text-xs rounded-sm transition-colors"
                 title={t('messages.confirmDelete')}
               >
                 {t('buttons.delete')}
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-2 py-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 text-xs rounded transition-colors"
+                className="px-2 py-1 bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500 text-gray-700 dark:text-gray-300 text-xs rounded-sm transition-colors"
                 title={t('messages.cancelDelete')}
               >
                 {t('buttons.cancel')}
