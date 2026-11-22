@@ -2,10 +2,11 @@ package com.shoppinglist.repository
 
 import com.shoppinglist.database.PushSubscriptions
 import com.shoppinglist.models.PushSubscription
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.greater
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.greater
+import com.shoppinglist.database.dbQuery
 import java.time.Instant
 import java.util.*
 
@@ -17,7 +18,7 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
         p256dh: String,
         auth: String,
         deviceId: String
-    ): PushSubscription = newSuspendedTransaction {
+    ): PushSubscription = dbQuery {
         val existing = PushSubscriptions.selectAll().where {
             (PushSubscriptions.endpoint eq endpoint) and (PushSubscriptions.listId eq listId)
         }.singleOrNull()
@@ -69,14 +70,14 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
         }
     }
 
-    override suspend fun unsubscribe(endpoint: String, listId: UUID): Boolean = newSuspendedTransaction {
+    override suspend fun unsubscribe(endpoint: String, listId: UUID): Boolean = dbQuery {
         val deleted = PushSubscriptions.deleteWhere {
             (PushSubscriptions.endpoint eq endpoint) and (PushSubscriptions.listId eq listId)
         }
         deleted > 0
     }
 
-    override suspend fun getSubscriptionsForList(listId: UUID): List<PushSubscription> = newSuspendedTransaction {
+    override suspend fun getSubscriptionsForList(listId: UUID): List<PushSubscription> = dbQuery {
         PushSubscriptions.selectAll().where { PushSubscriptions.listId eq listId }
             .map { row ->
                 PushSubscription(
@@ -95,7 +96,7 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
     override suspend fun getSubscriptionsForListExcludingDevice(
         listId: UUID,
         deviceId: String
-    ): List<PushSubscription> = newSuspendedTransaction {
+    ): List<PushSubscription> = dbQuery {
         PushSubscriptions.selectAll().where {
             (PushSubscriptions.listId eq listId) and (PushSubscriptions.deviceId neq deviceId)
         }
@@ -113,7 +114,7 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
             }
     }
 
-    override suspend fun incrementFailure(subscriptionId: UUID): Boolean = newSuspendedTransaction {
+    override suspend fun incrementFailure(subscriptionId: UUID): Boolean = dbQuery {
         val currentValue = PushSubscriptions
             .selectAll().where { PushSubscriptions.id eq subscriptionId }
             .map { it[PushSubscriptions.consecutiveFailures] }
@@ -125,12 +126,12 @@ class PushSubscriptionRepositoryImpl : PushSubscriptionRepository {
         updated > 0
     }
 
-    override suspend fun deleteSubscription(subscriptionId: UUID): Boolean = newSuspendedTransaction {
+    override suspend fun deleteSubscription(subscriptionId: UUID): Boolean = dbQuery {
         val deleted = PushSubscriptions.deleteWhere { PushSubscriptions.id eq subscriptionId }
         deleted > 0
     }
 
-    override suspend fun deleteStaleSubscriptions(maxFailures: Int): Int = newSuspendedTransaction {
+    override suspend fun deleteStaleSubscriptions(maxFailures: Int): Int = dbQuery {
         PushSubscriptions.deleteWhere {
             PushSubscriptions.consecutiveFailures greater maxFailures
         }

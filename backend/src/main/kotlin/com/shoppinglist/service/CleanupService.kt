@@ -4,10 +4,11 @@ import com.shoppinglist.database.ShoppingLists
 import com.shoppinglist.database.ListItems
 import com.shoppinglist.database.PushSubscriptions
 import kotlinx.coroutines.*
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.less
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
+import org.jetbrains.exposed.v1.core.*
+import org.jetbrains.exposed.v1.jdbc.*
+import org.jetbrains.exposed.v1.core.eq
+import org.jetbrains.exposed.v1.core.less
+import com.shoppinglist.database.dbQuery
 import org.slf4j.LoggerFactory
 import java.time.Instant
 import java.time.temporal.ChronoUnit
@@ -52,7 +53,7 @@ class CleanupService(private val retentionDays: Long? = null) {
         val cutoffTime = Instant.now().minus(actualRetentionDays, ChronoUnit.DAYS)
         logger.info("Performing cleanup for lists older than $cutoffTime")
         
-        return newSuspendedTransaction {
+        return dbQuery {
             // Find lists that haven't been modified for the retention period
             val expiredLists = ShoppingLists
                 .selectAll().where { ShoppingLists.lastModified less cutoffTime }
@@ -60,7 +61,7 @@ class CleanupService(private val retentionDays: Long? = null) {
             
             if (expiredLists.isEmpty()) {
                 logger.info("No expired lists found")
-                return@newSuspendedTransaction 0
+                return@dbQuery 0
             }
             
             logger.info("Found ${expiredLists.size} expired lists to clean up")
@@ -83,7 +84,7 @@ class CleanupService(private val retentionDays: Long? = null) {
     }
     
     suspend fun getListExpirationDate(listId: UUID): Instant? {
-        return newSuspendedTransaction {
+        return dbQuery {
             ShoppingLists
                 .selectAll().where { ShoppingLists.id eq listId }
                 .singleOrNull()
