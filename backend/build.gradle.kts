@@ -75,12 +75,12 @@ dependencies {
     // Testing
     testImplementation("io.ktor:ktor-server-test-host")
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlin_version")
-    testImplementation("org.testcontainers:testcontainers:1.21.4")
-    testImplementation("org.testcontainers:postgresql:1.21.4")
-    testImplementation("org.testcontainers:junit-jupiter:1.21.4")
-    testImplementation("org.junit.jupiter:junit-jupiter:5.14.4")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.14.4")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("org.testcontainers:testcontainers:2.0.5")
+    testImplementation("org.testcontainers:testcontainers-postgresql:2.0.5")
+    testImplementation("org.testcontainers:testcontainers-junit-jupiter:2.0.5")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:6.1.3")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:6.4.0")
 }
 
 tasks.test {
