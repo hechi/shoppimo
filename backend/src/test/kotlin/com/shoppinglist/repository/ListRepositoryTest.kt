@@ -2,10 +2,12 @@ package com.shoppinglist.repository
 
 import com.shoppinglist.database.DatabaseFactory
 import com.shoppinglist.database.ListItems
+import com.shoppinglist.database.PushSubscriptions
 import com.shoppinglist.database.ShoppingLists
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -47,7 +49,7 @@ class ListRepositoryTest {
         )
         
         transaction(database) {
-            SchemaUtils.create(ShoppingLists, ListItems)
+            SchemaUtils.create(ShoppingLists, ListItems, PushSubscriptions)
         }
         
         listRepository = ListRepositoryImpl()
@@ -56,7 +58,7 @@ class ListRepositoryTest {
     @AfterEach
     fun cleanup() {
         transaction(database) {
-            SchemaUtils.drop(ListItems, ShoppingLists)
+            SchemaUtils.drop(PushSubscriptions, ListItems, ShoppingLists)
         }
     }
 
@@ -139,6 +141,24 @@ class ListRepositoryTest {
         assertNull(retrievedList)
     }
 
+    @Test
+    fun `deleteList should remove items and push subscriptions of the list`() = runBlocking {
+        val listId = UUID.randomUUID()
+        listRepository.createList(listId)
+        ItemRepositoryImpl().createItem(listId, "Milk")
+        PushSubscriptionRepositoryImpl().subscribe(
+            listId = listId,
+            endpoint = "https://push.example.com/sub/1",
+            p256dh = "p256dh-key",
+            auth = "auth-key",
+            deviceId = "device-1"
+        )
+        val deleted = listRepository.deleteList(listId)
+        assertTrue(deleted)
+        assertNull(listRepository.getListById(listId))
+        assertEquals(0L, transaction(database) { ListItems.selectAll().count() })
+        assertEquals(0L, transaction(database) { PushSubscriptions.selectAll().count() })
+    }
     @Test
     fun `getListByAlias should return list with matching alias`() = runBlocking {
         val listId = UUID.randomUUID()

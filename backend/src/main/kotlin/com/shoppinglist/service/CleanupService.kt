@@ -2,6 +2,7 @@ package com.shoppinglist.service
 
 import com.shoppinglist.database.ShoppingLists
 import com.shoppinglist.database.ListItems
+import com.shoppinglist.database.PushSubscriptions
 import kotlinx.coroutines.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
@@ -64,9 +65,10 @@ class CleanupService(private val retentionDays: Long? = null) {
             
             logger.info("Found ${expiredLists.size} expired lists to clean up")
             
-            // Delete items first (due to foreign key constraints)
+            // Delete dependent rows first (due to foreign key constraints)
             for (listId in expiredLists) {
                 ListItems.deleteWhere { ListItems.listId eq listId }
+                PushSubscriptions.deleteWhere { PushSubscriptions.listId eq listId }
             }
             
             // Delete the lists
