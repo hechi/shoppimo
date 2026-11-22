@@ -27,6 +27,12 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
+kotlin {
+    compilerOptions {
+        // OpenAPI route annotations (Route.describe) are experimental in Ktor
+        optIn.add("io.ktor.utils.io.ExperimentalKtorApi")
+    }
+}
 repositories {
     mavenCentral()
 }
