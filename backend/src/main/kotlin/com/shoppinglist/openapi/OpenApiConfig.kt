@@ -77,7 +77,7 @@ every 15 seconds.
 
 ## Other interfaces
 
-* **MCP (Model Context Protocol):** exposed at `/mcp` (SSE transport). See `MCP_INSTALL.md`.
+* **MCP (Model Context Protocol):** exposed at `/mcp` (Streamable HTTP transport). See `MCP_INSTALL.md`.
 * **Web Push:** see the `Push` endpoints.
 """.trimIndent()
 
