@@ -6,9 +6,9 @@ val hikaricp_version: String by project
 val postgresql_version: String by project
 
 plugins {
-    kotlin("jvm") version "2.3.21"
+    kotlin("jvm") version "2.4.21"
     id("io.ktor.plugin") version "3.6.1"
-    id("org.jetbrains.kotlin.plugin.serialization") version "2.3.21"
+    id("org.jetbrains.kotlin.plugin.serialization") version "2.4.21"
 }
 
 java {
@@ -60,11 +60,11 @@ dependencies {
     implementation("org.postgresql:postgresql:$postgresql_version")
 
     // MCP (Model Context Protocol)
-    implementation("io.modelcontextprotocol:kotlin-sdk:0.15.0")
+    implementation("io.modelcontextprotocol:kotlin-sdk:0.16.0")
 
     // Metrics
     implementation("io.ktor:ktor-server-metrics-micrometer")
-    implementation("io.micrometer:micrometer-registry-prometheus:1.17.0")
+    implementation("io.micrometer:micrometer-registry-prometheus:1.18.0")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:$logback_version")
