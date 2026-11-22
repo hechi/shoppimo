@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '../../test/test-utils'
+import { render, screen, waitFor, fireEvent } from '../../test/test-utils'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import AddItemForm from '../AddItemForm'
@@ -52,14 +52,16 @@ describe('AddItemForm', () => {
     expect(input).toHaveValue('Test item')
   })
 
-  it('shows character count', async () => {
+  it('hides the character count until the limit is close', async () => {
     const user = userEvent.setup()
     render(<AddItemForm />)
-    
+
     const input = screen.getByPlaceholderText('Add new item...')
     await user.type(input, 'Test')
-    
-    expect(screen.getByText('4/500 characters')).toBeInTheDocument()
+    expect(screen.queryByText(/\/500 characters/)).not.toBeInTheDocument()
+
+    fireEvent.change(input, { target: { value: 'a'.repeat(450) } })
+    expect(screen.getByText('450/500 characters')).toBeInTheDocument()
   })
 
   it('disables submit button when input is empty', () => {

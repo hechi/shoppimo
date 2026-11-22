@@ -46,7 +46,8 @@
     "listExpiredToday": "This list expires today",
     "listExpiresTomorrow": "This list expires tomorrow",
     "listExpiresInDays": "This list expires in {days} days",
-    "characters": "characters"
+    "characters": "characters",
+    "pendingChanges": "{count} changes waiting to sync"
   },
   "instructions": {
     "howToUse": "How to use:",
@@ -61,7 +62,8 @@
     "left": "left",
     "complete": "complete",
     "completedItems": "completed item",
-    "completedItemsPlural": "completed items"
+    "completedItemsPlural": "completed items",
+    "doneSection": "Done"
   },
   "features": {
     "realTimeSync": "Real-time sync",
@@ -121,6 +123,11 @@
     "aliasInvalid": "Only lowercase letters, numbers and hyphens allowed",
     "aliasConflict": "This alias is already used by another list",
     "aliasSave": "Save",
-    "aliasRemove": "Remove"
+    "aliasRemove": "Remove",
+    "menu": "Settings menu",
+    "install": "Install app",
+    "installDescription": "Add Shoppimo to your home screen for quick access.",
+    "installButton": "Install",
+    "installIos": "Tap the Share button in Safari, then \"Add to Home Screen\"."
   }
 }

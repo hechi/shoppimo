@@ -201,8 +201,10 @@ html {
   scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
 }
 /* Mobile: avoid orphaned words in headings */
-h1, h2, h3 {
-  text-wrap: balance;
+@layer base {
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
 }
 /* Respect the system "reduce motion" setting */
 @media (prefers-reduced-motion: reduce) {
@@ -228,8 +230,17 @@ h1, h2, h3 {
   animation-duration: 0.25s;
   animation-timing-function: ease-in-out;
 }
+::view-transition-new(.shopping-item):only-child {
+  animation: shopping-item-enter 0.25s ease-out both;
+}
 ::view-transition-old(.shopping-item):only-child {
   animation: shopping-item-exit 0.2s ease-in both;
+}
+@keyframes shopping-item-enter {
+  from {
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
 }
 @keyframes shopping-item-exit {
   to {

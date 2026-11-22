@@ -3,6 +3,10 @@ import { useList } from '../context/ListContext';
 import { useI18n } from '../context/I18nContext';
 import AutocompleteDropdown from './AutocompleteDropdown';
 import autocompleteService from '../services/autocomplete';
+import { withViewTransition } from '../utils/viewTransition';
+
+// Only show the character counter when the limit is getting close, to keep the mobile bar compact
+const COUNTER_VISIBLE_FROM = 400;
 
 const AddItemForm = () => {
   const [text, setText] = useState('');
@@ -25,7 +29,12 @@ const AddItemForm = () => {
     setError(null);
     
     try {
-      await addItem(trimmedText);
+      // The optimistic update runs inside a view transition so the new row animates in
+      await new Promise<void>((resolve, reject) => {
+        withViewTransition(() => {
+          addItem(trimmedText).then(resolve, reject);
+        });
+      });
       autocompleteService.addItem(trimmedText);
       setText('');
       setShowDropdown(false);
@@ -134,9 +143,11 @@ const AddItemForm = () => {
         </div>
       )}
       
-      <div className="mt-1 text-xs text-gray-500 dark:text-gray-500">
-        {text.length}/500 {t('messages.characters', {}, 'characters')}
-      </div>
+      {text.length >= COUNTER_VISIBLE_FROM && (
+        <div className="mt-1 text-xs text-gray-500 dark:text-gray-500" aria-live="polite">
+          {text.length}/500 {t('messages.characters', {}, 'characters')}
+        </div>
+      )}
     </div>
   );
 };

@@ -305,3 +305,29 @@ describe('ListItem swipe removal', () => {
     expect(onDelete).toHaveBeenCalledWith('1')
   })
 })
+
+describe('ListItem swipe right', () => {
+  it('toggles the item when swiped right past the threshold', () => {
+    const onToggle = vi.fn()
+    render(<ListItem item={mockItem} onUpdate={vi.fn()} onDelete={vi.fn()} onToggle={onToggle} />)
+    const row = screen.getByText('Test item').closest('.group') as HTMLElement
+
+    fireEvent.touchStart(row, { touches: [{ clientX: 50, clientY: 10 }] })
+    fireEvent.touchMove(row, { touches: [{ clientX: 200, clientY: 10 }] })
+    fireEvent.touchEnd(row)
+
+    expect(onToggle).toHaveBeenCalledWith('1')
+  })
+
+  it('does not toggle on a short swipe right', () => {
+    const onToggle = vi.fn()
+    render(<ListItem item={mockItem} onUpdate={vi.fn()} onDelete={vi.fn()} onToggle={onToggle} />)
+    const row = screen.getByText('Test item').closest('.group') as HTMLElement
+
+    fireEvent.touchStart(row, { touches: [{ clientX: 50, clientY: 10 }] })
+    fireEvent.touchMove(row, { touches: [{ clientX: 90, clientY: 10 }] })
+    fireEvent.touchEnd(row)
+
+    expect(onToggle).not.toHaveBeenCalled()
+  })
+})

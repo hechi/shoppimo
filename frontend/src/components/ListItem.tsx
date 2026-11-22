@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { flushSync } from 'react-dom';
+import { withViewTransition } from '../utils/viewTransition';
 import { ListItem as ListItemType } from '../types';
 import { useI18n } from '../context/I18nContext';
 
@@ -7,11 +7,12 @@ interface ListItemProps {
   item: ListItemType;
   onUpdate: (id: string, text: string) => void;
   onDelete: (id: string) => void;
-  onToggle: (id: string) => void;
+  onToggle: (id: string) => void | Promise<void>;
 }
 
 const SWIPE_THRESHOLD = 80;
 const DELETE_THRESHOLD = 160;
+const MAX_RIGHT_SWIPE = 120;
 
 const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -33,6 +34,19 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
     }
   }, [item.text, isEditing]);
 
+  // Toggle inside a view transition so the row glides to its new place (e.g. into the "Done" section)
+  const toggleItem = useCallback(() => {
+    withViewTransition(() => {
+      try {
+        Promise.resolve(onToggle(item.id)).catch((error: unknown) => {
+          console.error('Failed to toggle item:', error);
+        });
+      } catch (error) {
+        console.error('Failed to toggle item:', error);
+      }
+    });
+  }, [item.id, onToggle]);
+
   // Swipe handlers
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     if (isEditing || isTemporary) return;
@@ -50,8 +64,8 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
       isSwiping.current = true;
     }
     if (isSwiping.current) {
-      // Only allow swiping left (negative)
-      setSwipeX(Math.min(0, dx));
+      // Left reveals delete, right checks the item off
+      setSwipeX(Math.min(MAX_RIGHT_SWIPE, dx));
     }
   }, [isEditing, isTemporary]);
 
@@ -61,9 +75,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
     setSwipeX(-9999);
     if (typeof document.startViewTransition === 'function') {
       setTimeout(() => {
-        document.startViewTransition(() => {
-          flushSync(() => { onDelete(item.id); });
-        });
+        withViewTransition(() => { onDelete(item.id); });
       }, 200);
     } else {
       setIsDeleting(true);
@@ -79,11 +91,15 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
     } else if (swipeX < -SWIPE_THRESHOLD) {
       // Partial swipe — reveal delete button
       setSwipeX(-SWIPE_THRESHOLD);
+    } else if (swipeX > SWIPE_THRESHOLD) {
+      // Swipe right — toggle completed, then snap back
+      setSwipeX(0);
+      toggleItem();
     } else {
       setSwipeX(0);
     }
     isSwiping.current = false;
-  }, [swipeX, removeRow]);
+  }, [swipeX, removeRow, toggleItem]);
 
   // Reset swipe when tapping elsewhere
   useEffect(() => {
@@ -138,13 +154,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
     else if (e.key === 'Escape') handleCancel();
   };
 
-  const handleToggle = async () => {
-    try {
-      await onToggle(item.id);
-    } catch (error) {
-      console.error('Failed to toggle item:', error);
-    }
-  };
+  const handleToggle = toggleItem;
 
   const handleDeleteClick = () => {
     if (isTemporary) return;
@@ -161,9 +171,20 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
       style={{ viewTransitionName: `item-${item.id}` }}
       data-testid={`item-${item.id}`}
     >
+      {/* Check-off background revealed by swiping right */}
+      {swipeX > 0 && (
+        <div
+          className="absolute inset-y-0 left-0 w-20 flex items-center justify-center bg-green-500 dark:bg-green-600 text-white"
+          aria-hidden="true"
+        >
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      )}
       {/* Delete background revealed on swipe */}
       <div
-        className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-red-500 dark:bg-red-600 text-white font-medium text-sm cursor-pointer active:bg-red-700"
+        className={`absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-red-500 dark:bg-red-600 text-white font-medium text-sm cursor-pointer active:bg-red-700 ${swipeX < 0 ? '' : 'invisible'}`}
         onClick={() => { if (swipeX <= -SWIPE_THRESHOLD) handleDeleteClick(); }}
         aria-label={t('messages.deleteItem')}
       >
@@ -231,7 +252,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
           ) : (
             <span
               onClick={handleEdit}
-              className={`block py-1 wrap-break-word transition-colors ${
+              className={`block py-1 text-left wrap-break-word transition-colors ${
                 isTemporary
                   ? 'text-gray-500 dark:text-gray-500 cursor-not-allowed'
                   : item.completed

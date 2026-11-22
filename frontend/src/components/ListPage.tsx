@@ -19,6 +19,7 @@ const ListPage = () => {
   const { t } = useI18n();
   const { addRecentList, removeInvalidList, updateItemCount } = useLocalCache();
   const [currentAlias, setCurrentAlias] = useState<string | null>(null);
+  const [doneOpen, setDoneOpen] = useState(false);
 
   useEffect(() => {
     setCurrentAlias(state.list?.alias ?? null);
@@ -138,6 +139,10 @@ const ListPage = () => {
   const showStickyStatus = !connectionStatus.isConnected || 
                             connectionStatus.isReconnecting || 
                             syncState.pendingOperations > 0;
+  const sortedItems = [...(state.list.items ?? [])].sort((a, b) => a.order - b.order);
+  const activeItems = sortedItems.filter(item => !item.completed);
+  const doneItems = sortedItems.filter(item => item.completed);
+  const donePercent = sortedItems.length > 0 ? Math.round((doneItems.length / sortedItems.length) * 100) : 0;
 
   return (
     <div className="min-h-dvh">
@@ -163,39 +168,42 @@ const ListPage = () => {
         </div>
       )}
       
-      <div className="absolute top-3 right-3 z-20 sm:top-4 sm:right-4">
-        <BurgerMenu listId={listId} currentAlias={currentAlias} onAliasChanged={setCurrentAlias} />
-      </div>
       <ConflictNotification
         show={state.conflictNotification.show}
         message={state.conflictNotification.message}
         onDismiss={dismissConflictNotification}
       />
-      <div className={`max-w-2xl mx-auto py-4 md:py-8 px-3 md:px-4 ${showStickyStatus ? 'pt-20 sm:pt-20' : 'pt-16 sm:pt-8'}`}>
-        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xs rounded-3xl shadow-card ring-1 ring-gray-200/70 dark:ring-gray-700/60 overflow-hidden animate-scale-in">
-          {/* Header */}
-          <div className="p-4 md:p-6 border-b border-gray-200/80 dark:border-gray-700/80 bg-linear-to-b from-blue-50/40 to-transparent dark:from-blue-950/20">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 bg-linear-to-br from-blue-500 dark:from-blue-600 to-blue-700 dark:to-blue-800 rounded-2xl shadow-lift flex items-center justify-center">
+      <div className={`max-w-2xl mx-auto py-4 md:py-8 px-3 md:px-4 ${showStickyStatus ? 'pt-20 sm:pt-20' : 'pt-3 sm:pt-8'}`}>
+        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xs rounded-3xl shadow-card ring-1 ring-gray-200/70 dark:ring-gray-700/60 overflow-clip animate-scale-in">
+          {/* Sticky title bar: stays visible while scrolling long lists */}
+          <div className={`sticky z-10 ${showStickyStatus ? 'top-12' : 'top-0'} px-4 md:px-6 py-3 md:py-4 bg-white dark:bg-gray-800 border-b border-gray-200/60 dark:border-gray-700/60`}>
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="hidden sm:flex w-11 h-11 shrink-0 bg-linear-to-br from-blue-500 dark:from-blue-600 to-blue-700 dark:to-blue-800 rounded-2xl shadow-lift flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
                 </div>
-                <div>
-                  <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-gray-100">{t('app.title')}</h1>
-                  <SyncStatusIndicator 
-                    connectionStatus={connectionStatus} 
-                    syncState={syncState} 
-                  />
+                <div className="min-w-0">
+                  <h1 className="text-base sm:text-lg md:text-2xl font-bold text-left text-gray-900 dark:text-gray-100 truncate">{t('app.title')}</h1>
+                  {/* On phones the fixed status bar already reports offline and pending changes */}
+                  <div className="hidden sm:block">
+                    <SyncStatusIndicator
+                      connectionStatus={connectionStatus}
+                      syncState={syncState}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                 <NotificationBell listId={listId} />
                 <ShareButton listId={listId} />
+                <BurgerMenu listId={listId} currentAlias={currentAlias} onAliasChanged={setCurrentAlias} />
               </div>
             </div>
-
+          </div>
+          {/* Header */}
+          <div className="px-4 pt-4 pb-4 md:px-6 md:pt-5 md:pb-6 border-b border-gray-200/80 dark:border-gray-700/80 bg-linear-to-b from-blue-50/40 to-transparent dark:from-blue-950/20">
             {/* AddItemForm: visible in header on desktop, hidden on mobile (shown at bottom instead) */}
             <div className="hidden md:block">
               <AddItemForm />
@@ -252,14 +260,17 @@ const ListPage = () => {
 
             {/* Offline Mode Notice */}
             {!connectionStatus.isConnected && !connectionStatus.isReconnecting && (
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-950 border-l-4 border-blue-400 dark:border-blue-500 rounded-r-lg">
+              <div role="status" className="mt-4 p-3 bg-amber-50 dark:bg-amber-950 border-l-4 border-amber-400 dark:border-amber-500 rounded-r-lg">
                 <div className="flex items-center gap-2">
-                  <svg className="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
                   </svg>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-blue-900 dark:text-blue-100">{t('messages.workingOffline')}</p>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">{t('messages.changesWillSync')}</p>
+                    <p className="text-sm font-medium text-amber-900 dark:text-amber-100">{t('messages.workingOffline')}</p>
+                    <p className="text-xs text-amber-700 dark:text-amber-300">
+                      {t('messages.changesWillSync')}
+                      {syncState.pendingOperations > 0 && ` · ${t('messages.pendingChanges', { count: syncState.pendingOperations })}`}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -296,8 +307,8 @@ const ListPage = () => {
               ) : (
                 <>
                   {/* List Statistics */}
-                  <div className="flex items-center justify-between mb-6 p-3.5 bg-gray-50/80 dark:bg-gray-900/60 rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-700/60">
-                    <div className="flex items-center gap-6 text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-y-2.5 mb-4 md:mb-6 p-3 md:p-3.5 bg-gray-50/80 dark:bg-gray-900/60 rounded-xl ring-1 ring-gray-200/70 dark:ring-gray-700/60">
+                    <div className="flex items-center gap-3 md:gap-6 text-sm">
                       <div className="flex items-center gap-2">
                         <div className="w-2 h-2 bg-gray-400 dark:bg-gray-600 rounded-full"></div>
                         <span className="text-gray-600 dark:text-gray-400" data-testid="stats-total">{state.list?.items?.length || 0} {t('stats.total')}</span>
@@ -311,25 +322,53 @@ const ListPage = () => {
                         <span className="text-gray-600 dark:text-gray-400" data-testid="stats-left">{state.list?.items?.filter(item => !item.completed).length || 0} {t('stats.left')}</span>
                       </div>
                     </div>
-                    {state.list?.items?.length > 0 && (
-                      <div className="text-xs text-gray-500 dark:text-gray-500">
-{Math.round(((state.list?.items?.filter(item => item.completed).length || 0) / (state.list?.items?.length || 1)) * 100)}% {t('stats.complete')}
-                      </div>
-                    )}
+                    <div className="hidden sm:block text-xs text-gray-500 dark:text-gray-500">
+                      {donePercent}% {t('stats.complete')}
+                    </div>
+                    <div className="order-last basis-full h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden" aria-hidden="true">
+                      <div className="h-full bg-green-500 transition-[width] duration-300" style={{ width: `${donePercent}%` }} />
+                    </div>
                   </div>
 
                   {/* Items List */}
-                  {state.list?.items
-                    ?.sort((a, b) => a.order - b.order)
-                    .map(item => (
-                      <ListItem
-                        key={item.id}
-                        item={item}
-                        onUpdate={updateItem}
-                        onDelete={deleteItem}
-                        onToggle={toggleItem}
-                      />
-                    ))}
+                  {activeItems.map(item => (
+                    <ListItem
+                      key={item.id}
+                      item={item}
+                      onUpdate={updateItem}
+                      onDelete={deleteItem}
+                      onToggle={toggleItem}
+                    />
+                  ))}
+                  {/* Completed items live in a collapsible section to keep the active list short */}
+                  {doneItems.length > 0 && (
+                    <details
+                      className="group/done pt-2"
+                      open={doneOpen || activeItems.length === 0}
+                      onToggle={(e) => {
+                        if (activeItems.length > 0) setDoneOpen(e.currentTarget.open);
+                      }}
+                      data-testid="done-section"
+                    >
+                      <summary className="flex items-center gap-2 min-h-11 px-1 cursor-pointer select-none text-sm font-medium text-gray-600 dark:text-gray-400 list-none [&::-webkit-details-marker]:hidden">
+                        <svg className="w-4 h-4 transition-transform group-open/done:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        {t('stats.doneSection')} ({doneItems.length})
+                      </summary>
+                      <div className="space-y-2 mt-1">
+                        {doneItems.map(item => (
+                          <ListItem
+                            key={item.id}
+                            item={item}
+                            onUpdate={updateItem}
+                            onDelete={deleteItem}
+                            onToggle={toggleItem}
+                          />
+                        ))}
+                      </div>
+                    </details>
+                  )}
                 </>
               )}
             </div>

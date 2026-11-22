@@ -6,10 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **Swipe right to check off** — Swiping an item to the right ticks it off (or un-ticks it), so you no longer have to hit the small checkbox in the store
+- **Native share on phones** — The share button opens the phone's own share sheet (Messages, WhatsApp, ...) and falls back to copying the link
+- **Install app option** — The settings menu offers "Install app" when the browser supports it, and shows the "Add to Home Screen" steps on iPhones
+- **Animated adding and checking off** — New items fade in, and items glide away when ticked
+- **Collapsible "Done" section** — Completed items are grouped under "Done (n)" so the active list stays short. A progress bar replaces the percentage text on small screens
 ### Changed
 - **Better phone experience** — The add-item bar and page now respect notches and the home indicator, and fill the real visible screen height when the browser toolbar shows or hides. The checkbox has a larger 44px tap area, long item names wrap instead of being cut off, and the keyboard shows a "Done" key. The browser bar color follows light and dark mode, swiping an item no longer fights with scrolling, and animations are reduced when the device asks for it
 - **Smoother settings menu and item removal** — On phones the settings open as a native bottom sheet that handles Esc, the back gesture and scrolling behind it on its own. On larger screens they open as a popover under the menu button. When you delete an item, the items below glide up into the gap instead of jumping
 
+- **Title bar stays visible** — The title, share button and settings menu stay at the top while scrolling long lists. On phones the settings button moved into this bar and the share button shows only its icon
+- **Clearer offline notice** — The offline notice is now amber and shows how many changes are waiting to sync
+- **Less clutter when adding items** — The character counter only appears near the 500 character limit
+- **Keyboard on Android** — The add-item bar now stays above the on-screen keyboard
+- **Translated settings label** — The settings button label is now translated
 ## [8.0.1] - 2026-11-22
 ### Fixed
 - **MCP connection with current clients** — AI clients that use the latest MCP protocol version (2025-11-25), such as current Kiro releases, could not connect because the server left the negotiated protocol version out of its handshake reply. The server now always sends it. As a side effect, creating a list through the API now also returns an empty `items` array
