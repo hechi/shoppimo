@@ -127,6 +127,7 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh;
   color: var(--color-text);
   background-color: var(--color-bg-secondary);
   /* Subtle brand-tinted ambient background for depth */
@@ -191,5 +192,24 @@ a, button, input, select, textarea, [role="option"], [role="radio"], label {
 @media (min-width: 768px) {
   #root {
     padding: 2rem;
+  }
+}
+
+/* Mobile: no grey tap flash, and focused fields stay clear of the sticky add bar and home indicator */
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-padding-bottom: calc(6rem + env(safe-area-inset-bottom, 0px));
+}
+/* Mobile: avoid orphaned words in headings */
+h1, h2, h3 {
+  text-wrap: balance;
+}
+/* Respect the system "reduce motion" setting */
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

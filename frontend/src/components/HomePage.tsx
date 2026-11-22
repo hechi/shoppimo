@@ -21,7 +21,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
+    <div className="min-h-dvh flex items-center justify-center px-4">
       <div className="absolute top-4 right-4 z-20">
         <BurgerMenu />
       </div>

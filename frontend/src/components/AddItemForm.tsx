@@ -103,6 +103,8 @@ const AddItemForm = () => {
             }`}
             disabled={isSubmitting}
             maxLength={500}
+            enterKeyHint="done"
+            autoComplete="off"
             data-testid="add-item-input"
           />
           <AutocompleteDropdown

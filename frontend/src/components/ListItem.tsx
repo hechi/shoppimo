@@ -169,6 +169,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
               : 'bg-gray-50 dark:bg-gray-900 border border-gray-200/70 dark:border-gray-700/50 hover:bg-white dark:hover:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600 hover:shadow-soft active:bg-gray-100 dark:active:bg-gray-800'
         }`}
         style={{
+          touchAction: 'pan-y',
           transform: `translateX(${swipeX}px)`,
           transition: isSwiping.current ? 'none' : 'transform 0.2s ease-out',
         }}
@@ -176,7 +177,8 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Checkbox */}
+        {/* Checkbox: label extends the touch target to 44x44 without changing the layout */}
+        <label className="-m-2.5 p-2.5 flex items-center justify-center shrink-0">
         <input
           type="checkbox"
           checked={item.completed || false}
@@ -191,6 +193,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
               : (item.completed ? t('messages.markAsIncomplete') : t('messages.markAsComplete'))
           }
         />
+        </label>
 
         {/* Item text */}
         <div className="flex-1 min-w-0">
@@ -204,6 +207,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
                 onKeyDown={handleKeyPress}
                 className="flex-1 min-w-0 px-3 py-2 md:px-2 md:py-1 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600 rounded-sm focus:outline-hidden focus:ring-2 focus:ring-blue-500 text-base md:text-sm"
                 autoFocus
+                enterKeyHint="done"
                 disabled={isUpdating}
               />
               {isUpdating && (
@@ -213,7 +217,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
           ) : (
             <span
               onClick={handleEdit}
-              className={`block py-1 truncate transition-colors ${
+              className={`block py-1 wrap-break-word transition-colors ${
                 isTemporary
                   ? 'text-gray-500 dark:text-gray-500 cursor-not-allowed'
                   : item.completed
