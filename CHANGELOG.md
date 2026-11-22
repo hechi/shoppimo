@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - **Ktor 3.6.1** — The backend framework was upgraded from 3.5.1 to 3.6.1. No change in behavior for users
+- **Kotlin 2.4.21 and backend dependencies** — The backend was upgraded from Kotlin 2.3.21 to 2.4.21, together with the MCP SDK (0.15.0 to 0.16.0), Micrometer (1.17.0 to 1.18.0) and the PostgreSQL driver (42.7.13 to 42.7.14). No change in behavior for users
 ### Added
 - **OpenAPI specification** — The backend now publishes a machine-readable API description at `/api/openapi.json` and an interactive Swagger UI at `/api/docs`. It covers every REST endpoint with parameters, request and response bodies, and error codes, and it documents the real-time WebSocket protocol, so API clients can be generated or tested without reading the source
 ### Fixed
