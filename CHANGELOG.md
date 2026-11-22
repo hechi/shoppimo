@@ -6,6 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.0.0] - 2026-11-22
+> **Breaking change for MCP clients:** the `/mcp` endpoint now uses the Streamable HTTP transport. Clients that only support the old SSE transport must be updated. Clients set up as described in [MCP_INSTALL.md](MCP_INSTALL.md) (`--transport http`) keep working.
+
 ### Changed
 - **Frontend dependency upgrades** — React 18 to 19, React Router 6 to 7, i18next 25 to 27 (react-i18next 16 to 18), Vite 5 to 8, Tailwind CSS 3 to 4, TypeScript 5.9 to 6.0, ESLint 8 to 10 (new flat config), Vitest 4 to 5, Cypress 15 to 16, jsdom 27 to 31 and Testing Library jest-dom 6 to 8. The look and behavior of the app stay the same. CI now uses Node.js 24, the version the Docker images already use
 - **Database migrations with Flyway** — The database schema is now managed by versioned SQL migrations that run at startup, instead of being created implicitly by the ORM. Existing databases are upgraded automatically and keep their data. Future schema changes are explicit and reviewable
@@ -187,7 +191,8 @@ Re-tagged release of v7.0.0 with no additional changes.
 
 ---
 
-[Unreleased]: https://github.com/hechi/shoppimo/compare/v7.3.0...HEAD
+[Unreleased]: https://github.com/hechi/shoppimo/compare/v8.0.0...HEAD
+[8.0.0]: https://github.com/hechi/shoppimo/compare/v7.3.0...v8.0.0
 [7.3.0]: https://github.com/hechi/shoppimo/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/hechi/shoppimo/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/hechi/shoppimo/compare/v7.0.0...v7.1.0
