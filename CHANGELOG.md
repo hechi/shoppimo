@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Fixed
+- **MCP connection with current clients** — AI clients that use the latest MCP protocol version (2025-11-25), such as current Kiro releases, could not connect because the server left the negotiated protocol version out of its handshake reply. The server now always sends it. As a side effect, creating a list through the API now also returns an empty `items` array
 
 ## [8.0.0] - 2026-11-22
 > **Breaking change for MCP clients:** the `/mcp` endpoint now uses the Streamable HTTP transport. Clients that only support the old SSE transport must be updated. Clients set up as described in [MCP_INSTALL.md](MCP_INSTALL.md) (`--transport http`) keep working.
