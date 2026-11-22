@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Changed
+- **Better phone experience** — The add-item bar and page now respect notches and the home indicator, and fill the real visible screen height when the browser toolbar shows or hides. The checkbox has a larger 44px tap area, long item names wrap instead of being cut off, and the keyboard shows a "Done" key. The browser bar color follows light and dark mode, swiping an item no longer fights with scrolling, and animations are reduced when the device asks for it
 
 ## [8.0.1] - 2026-11-22
 ### Fixed

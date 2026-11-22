@@ -74,7 +74,7 @@ const ListPage = () => {
 
   if (!listId) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-600 dark:text-red-400 mb-4">{t('messages.invalidList')}</h1>
           <p className="text-gray-600 dark:text-gray-400">{t('messages.invalidListDescription')}</p>
@@ -85,7 +85,7 @@ const ListPage = () => {
 
   if (state.loading.isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-500 mx-auto mb-4"></div>
           <p className="text-gray-600 dark:text-gray-400">{t('messages.loadingList')}</p>
@@ -96,7 +96,7 @@ const ListPage = () => {
 
   if (state.loading.error) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
           <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg className="w-8 h-8 text-red-600 dark:text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -126,7 +126,7 @@ const ListPage = () => {
 
   if (!state.list) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
+      <div className="min-h-dvh bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-600 dark:text-gray-400 mb-4">{t('messages.listNotFound')}</h1>
           <p className="text-gray-600 dark:text-gray-400">{t('messages.listNotFoundDescription')}</p>
@@ -140,7 +140,7 @@ const ListPage = () => {
                             syncState.pendingOperations > 0;
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-dvh">
       {/* Sticky Status Bar - Only shown when disconnected or has pending changes */}
       {showStickyStatus && (
         <div className="fixed top-0 left-0 right-0 z-30 bg-white dark:bg-gray-800 shadow-md border-b border-gray-200 dark:border-gray-700">
@@ -348,11 +348,11 @@ const ListPage = () => {
           </div>
         </div>
         {/* Spacer for mobile sticky input */}
-        <div className="h-24 md:hidden" />
+        <div className="h-[calc(6rem+env(safe-area-inset-bottom,0px))] md:hidden" />
       </div>
 
       {/* Mobile sticky bottom AddItemForm */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-3 py-3 shadow-[0_-2px_10px_rgba(0,0,0,0.08)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-20 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 pt-3 pl-[max(0.75rem,env(safe-area-inset-left,0px))] pr-[max(0.75rem,env(safe-area-inset-right,0px))] pb-[max(0.75rem,env(safe-area-inset-bottom,0px))] shadow-[0_-2px_10px_rgba(0,0,0,0.08)]">
         <AddItemForm />
       </div>
     </div>
