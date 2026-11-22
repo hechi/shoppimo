@@ -5,6 +5,10 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.http.*
 import com.shoppinglist.mcp.McpServerConfig
+import com.shoppinglist.openapi.healthDoc
+import com.shoppinglist.openapi.metricsDoc
+import com.shoppinglist.openapi.openApiDocs
+import io.ktor.server.routing.openapi.describe
 import com.shoppinglist.routes.listRoutes
 import com.shoppinglist.routes.pushRoutes
 import com.shoppinglist.models.HealthResponse
@@ -51,16 +55,18 @@ fun Application.configureRouting(
                         )
                     )
                 }
-            }
+            }.describe(healthDoc)
             
             get("/metrics") {
                 call.respond(appMicrometerRegistry.scrape())
-            }
+            }.describe(metricsDoc)
             
             if (pushRepository != null) {
                 pushRoutes(pushRepository)
             }
             listRoutes(pushNotificationService)
+            // Swagger UI at /api/docs, OpenAPI document generated from the routes above
+            openApiDocs()
         }
 
         // MCP (Model Context Protocol) endpoint for AI assistant integration

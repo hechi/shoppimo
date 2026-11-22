@@ -3,6 +3,8 @@ package com.shoppinglist.routes
 import com.shoppinglist.repository.PushSubscriptionRepository
 import com.shoppinglist.util.getEnv
 import io.ktor.http.*
+import com.shoppinglist.openapi.*
+import io.ktor.server.routing.openapi.describe
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -39,7 +41,7 @@ fun Route.pushRoutes(pushRepository: PushSubscriptionRepository) {
         get("/vapid-key") {
             val publicKey = getEnv("VAPID_PUBLIC_KEY") ?: ""
             call.respond(HttpStatusCode.OK, VapidKeyResponse(publicKey))
-        }
+        }.describe(vapidKeyDoc)
 
         post("/subscribe") {
             val request = try {
@@ -71,7 +73,7 @@ fun Route.pushRoutes(pushRepository: PushSubscriptionRepository) {
             )
 
             call.respond(HttpStatusCode.Created, SubscribeResponse(subscribed = true))
-        }
+        }.describe(subscribeDoc)
 
         post("/unsubscribe") {
             val request = try {
@@ -106,6 +108,6 @@ fun Route.pushRoutes(pushRepository: PushSubscriptionRepository) {
             pushRepository.unsubscribe(endpoint = endpoint, listId = listId)
 
             call.respond(HttpStatusCode.OK, UnsubscribeResponse(unsubscribed = true))
-        }
+        }.describe(unsubscribeDoc)
     }
 }

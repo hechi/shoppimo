@@ -143,6 +143,18 @@ For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 | `POST` | `/api/push/subscribe` | Subscribe to push notifications |
 | `POST` | `/api/push/unsubscribe` | Unsubscribe from push notifications |
 | `SSE` | `/mcp` | Model Context Protocol endpoint (AI integration) |
+| `GET` | `/api/docs` | Interactive API documentation (Swagger UI) |
+| `GET` | `/api/openapi.json` | OpenAPI specification (JSON) |
+
+### OpenAPI specification
+
+The backend generates its [OpenAPI](https://spec.openapis.org/oas/latest.html) document at request time from the Ktor routes, so it always matches the running code. Open `/api/docs` for Swagger UI (for example `http://localhost:8080/api/docs`) or fetch `/api/openapi.json` for client generators. Swagger UI loads its JavaScript and CSS from `unpkg.com`, so the browser needs internet access to render it. The JSON document works offline.
+
+The operation descriptions live in `backend/src/main/kotlin/com/shoppinglist/openapi/OpenApiDocs.kt`. When you add or change an endpoint, update its description there.
+
+### WebSocket protocol
+
+OpenAPI cannot describe WebSockets. The protocol for `/ws/{listId}` is documented in the description of the OpenAPI document (top of `/api/docs`). In short: the server pushes JSON messages (`CONNECTION_ESTABLISHED`, `ITEM_ADDED`, `ITEM_UPDATED`, `ITEM_DELETED`, `ITEMS_CLEARED`, `ERROR`) with the envelope `{ type, listId, data, timestamp }` after changes made through the REST API.
 
 ## MCP (Model Context Protocol)
 

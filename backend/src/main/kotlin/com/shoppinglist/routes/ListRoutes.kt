@@ -6,6 +6,8 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import com.shoppinglist.models.*
+import com.shoppinglist.openapi.*
+import io.ktor.server.routing.openapi.describe
 import com.shoppinglist.repository.ListRepositoryImpl
 import com.shoppinglist.repository.ItemRepositoryImpl
 import com.shoppinglist.plugins.WebSocketServiceKey
@@ -70,7 +72,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to create shopping list")
                 )
             }
-        }
+        }.describe(createListDoc)
         
         // GET /api/lists/{id} - Get shopping list by ID
         get("/{id}") {
@@ -110,7 +112,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to retrieve shopping list")
                 )
             }
-        }
+        }.describe(getListDoc)
         
         // POST /api/lists/{id}/items - Add new item to list
         post("/{id}/items") {
@@ -187,7 +189,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to create item")
                 )
             }
-        }
+        }.describe(addItemDoc)
         
         // PUT /api/lists/{id}/items/{itemId} - Update existing item
         put("/{id}/items/{itemId}") {
@@ -294,7 +296,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to update item")
                 )
             }
-        }
+        }.describe(updateItemDoc)
         
         // DELETE /api/lists/{id}/items/{itemId} - Delete item
         delete("/{id}/items/{itemId}") {
@@ -373,7 +375,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to delete item")
                 )
             }
-        }
+        }.describe(deleteItemDoc)
         
         // POST /api/lists/{id}/clear-completed - Clear completed items
         post("/{id}/clear-completed") {
@@ -431,7 +433,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to clear completed items")
                 )
             }
-        }
+        }.describe(clearCompletedDoc)
         
         // GET /api/lists/by-alias/{alias} - Resolve alias to list
         get("/by-alias/{alias}") {
@@ -463,7 +465,7 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to resolve alias")
                 )
             }
-        }
+        }.describe(getListByAliasDoc)
         
         // PUT /api/lists/{id}/alias - Set/update/remove alias
         put("/{id}/alias") {
@@ -557,6 +559,6 @@ fun Route.listRoutes(pushNotificationService: PushNotificationService? = null) {
                     ErrorResponse("server_error", "Failed to update alias")
                 )
             }
-        }
+        }.describe(updateAliasDoc)
     }
 }

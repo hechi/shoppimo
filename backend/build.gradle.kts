@@ -41,6 +41,9 @@ dependencies {
     implementation("io.ktor:ktor-server-netty")
     implementation("io.ktor:ktor-server-config-yaml")
     implementation("io.ktor:ktor-server-sse")
+    // OpenAPI specification + Swagger UI
+    implementation("io.ktor:ktor-server-routing-openapi")
+    implementation("io.ktor:ktor-server-swagger")
 
     // Database
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
