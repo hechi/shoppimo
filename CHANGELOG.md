@@ -14,11 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Kotlin 2.4.21 and backend dependencies** — The backend was upgraded from Kotlin 2.3.21 to 2.4.21, together with the MCP SDK (0.15.0 to 0.16.0), Micrometer (1.17.0 to 1.18.0) and the PostgreSQL driver (42.7.13 to 42.7.14). No change in behavior for users
 - **Major backend dependency upgrades** — Exposed 0.60.0 to 1.6.1, HikariCP 5.1.0 to 7.1.0, Gradle 8.11.1 to 9.9.2, and the test tools Testcontainers 1.21.4 to 2.0.5, JUnit 5.14.4 to 6.1.3 and mockito-kotlin 5.4.0 to 6.4.0. No change in behavior for users
 - **MCP transport** — The MCP endpoint at `/mcp` now uses the Streamable HTTP transport instead of the deprecated SSE transport. The URL stays the same. Clients that connect with `--transport http` (as in [MCP_INSTALL.md](MCP_INSTALL.md)) keep working. Clients that only support the old SSE transport must be updated
-### Added
-- **OpenAPI specification** — The backend now publishes a machine-readable API description at `/api/openapi.json` and an interactive Swagger UI at `/api/docs`. It covers every REST endpoint with parameters, request and response bodies, and error codes, and it documents the real-time WebSocket protocol, so API clients can be generated or tested without reading the source
 ### Fixed
 - **Cleanup of expired lists** — Expired lists that had push notification subscriptions could not be deleted, so the daily cleanup failed and those lists were never removed. Deleting a list (by cleanup or via MCP `delete_list`) now also removes its items and push subscriptions
 
+## [7.3.0] - 2026-11-22
+### Added
+- **OpenAPI specification** — The backend now publishes a machine-readable API description at `/api/openapi.json` and an interactive Swagger UI at `/api/docs`. It covers every REST endpoint with parameters, request and response bodies, and error codes, and it documents the real-time WebSocket protocol, so API clients can be generated or tested without reading the source
 ## [7.2.0] - 2026-08-23
 
 ### Added
@@ -186,7 +187,8 @@ Re-tagged release of v7.0.0 with no additional changes.
 
 ---
 
-[Unreleased]: https://github.com/hechi/shoppimo/compare/v7.2.0...HEAD
+[Unreleased]: https://github.com/hechi/shoppimo/compare/v7.3.0...HEAD
+[7.3.0]: https://github.com/hechi/shoppimo/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/hechi/shoppimo/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/hechi/shoppimo/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/hechi/shoppimo/compare/v6.4.0...v7.0.0
