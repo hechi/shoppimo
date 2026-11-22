@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { flushSync } from 'react-dom';
 import { ListItem as ListItemType } from '../types';
 import { useI18n } from '../context/I18nContext';
 
@@ -54,13 +55,27 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
     }
   }, [isEditing, isTemporary]);
 
+  // Slide the row away, then remove it. With view transitions the rows below glide up;
+  // without them the row collapses via max-height.
+  const removeRow = useCallback(() => {
+    setSwipeX(-9999);
+    if (typeof document.startViewTransition === 'function') {
+      setTimeout(() => {
+        document.startViewTransition(() => {
+          flushSync(() => { onDelete(item.id); });
+        });
+      }, 200);
+    } else {
+      setIsDeleting(true);
+      setTimeout(() => onDelete(item.id), 200);
+    }
+  }, [item.id, onDelete]);
+
   const handleTouchEnd = useCallback(() => {
     if (!isSwiping.current) return;
     if (swipeX < -DELETE_THRESHOLD) {
       // Full swipe — delete
-      setIsDeleting(true);
-      setSwipeX(-9999);
-      setTimeout(() => onDelete(item.id), 200);
+      removeRow();
     } else if (swipeX < -SWIPE_THRESHOLD) {
       // Partial swipe — reveal delete button
       setSwipeX(-SWIPE_THRESHOLD);
@@ -68,7 +83,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
       setSwipeX(0);
     }
     isSwiping.current = false;
-  }, [swipeX, item.id, onDelete]);
+  }, [swipeX, removeRow]);
 
   // Reset swipe when tapping elsewhere
   useEffect(() => {
@@ -133,9 +148,7 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
 
   const handleDeleteClick = () => {
     if (isTemporary) return;
-    setIsDeleting(true);
-    setSwipeX(-9999);
-    setTimeout(() => onDelete(item.id), 200);
+    removeRow();
   };
 
   // Desktop fallback delete with confirmation
@@ -144,7 +157,8 @@ const ListItem = ({ item, onUpdate, onDelete, onToggle }: ListItemProps) => {
   return (
     <div
       ref={rowRef}
-      className={`relative overflow-hidden rounded-xl transition-all duration-200 ${isDeleting ? 'max-h-0 opacity-0' : 'max-h-40'}`}
+      className={`shopping-item relative overflow-hidden rounded-xl transition-all duration-200 ${isDeleting ? 'max-h-0 opacity-0' : 'max-h-40'}`}
+      style={{ viewTransitionName: `item-${item.id}` }}
       data-testid={`item-${item.id}`}
     >
       {/* Delete background revealed on swipe */}

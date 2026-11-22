@@ -213,3 +213,42 @@ h1, h2, h3 {
     scroll-behavior: auto !important;
   }
 }
+
+/* Animate list rows when one is removed: the others glide into the gap, the removed one fades out */
+:root {
+  view-transition-name: none;
+}
+::view-transition {
+  pointer-events: none;
+}
+.shopping-item {
+  view-transition-class: shopping-item;
+}
+::view-transition-group(.shopping-item) {
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+}
+::view-transition-old(.shopping-item):only-child {
+  animation: shopping-item-exit 0.2s ease-in both;
+}
+@keyframes shopping-item-exit {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+/* Modal dialogs: keep scrolling inside the sheet instead of the page behind it */
+dialog:modal {
+  overscroll-behavior: contain;
+}
+dialog::backdrop {
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
