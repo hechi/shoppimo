@@ -1,13 +1,16 @@
 package com.shoppinglist.service
 
 import com.shoppinglist.database.ListItems
+import com.shoppinglist.database.PushSubscriptions
 import com.shoppinglist.database.ShoppingLists
 import com.shoppinglist.repository.ItemRepositoryImpl
 import com.shoppinglist.repository.ListRepositoryImpl
+import com.shoppinglist.repository.PushSubscriptionRepositoryImpl
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.update
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -51,7 +54,7 @@ class CleanupServiceTest {
         )
         
         transaction(database) {
-            SchemaUtils.create(ShoppingLists, ListItems)
+            SchemaUtils.create(ShoppingLists, ListItems, PushSubscriptions)
         }
         
         // Create cleanup service with 7 days retention for testing
@@ -63,7 +66,7 @@ class CleanupServiceTest {
     @AfterEach
     fun cleanup() {
         transaction(database) {
-            SchemaUtils.drop(ListItems, ShoppingLists)
+            SchemaUtils.drop(PushSubscriptions, ListItems, ShoppingLists)
         }
         // No cleanup needed for constructor parameter approach
     }
@@ -96,6 +99,28 @@ class CleanupServiceTest {
         assertNull(listRepository.getListById(listId))
     }
     
+    @Test
+    fun `performCleanup should delete expired lists that have push subscriptions`() = runBlocking {
+        val listId = UUID.randomUUID()
+        listRepository.createList(listId)
+        itemRepository.createItem(listId, "Test item")
+        PushSubscriptionRepositoryImpl().subscribe(
+            listId = listId,
+            endpoint = "https://push.example.com/sub/1",
+            p256dh = "p256dh-key",
+            auth = "auth-key",
+            deviceId = "device-1"
+        )
+        transaction(database) {
+            ShoppingLists.update({ ShoppingLists.id eq listId }) {
+                it[lastModified] = Instant.now().minus(10, ChronoUnit.DAYS)
+            }
+        }
+        val deletedCount = cleanupService.performCleanup()
+        assertEquals(1, deletedCount)
+        assertNull(listRepository.getListById(listId))
+        assertEquals(0L, transaction(database) { PushSubscriptions.selectAll().count() })
+    }
     @Test
     fun `performCleanup should not delete recent lists`() = runBlocking {
         // Create a list

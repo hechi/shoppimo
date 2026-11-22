@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - **OpenAPI specification** — The backend now publishes a machine-readable API description at `/api/openapi.json` and an interactive Swagger UI at `/api/docs`. It covers every REST endpoint with parameters, request and response bodies, and error codes, and it documents the real-time WebSocket protocol, so API clients can be generated or tested without reading the source
+### Fixed
+- **Cleanup of expired lists** — Expired lists that had push notification subscriptions could not be deleted, so the daily cleanup failed and those lists were never removed. Deleting a list (by cleanup or via MCP `delete_list`) now also removes its items and push subscriptions
 
 ## [7.2.0] - 2026-08-23
 

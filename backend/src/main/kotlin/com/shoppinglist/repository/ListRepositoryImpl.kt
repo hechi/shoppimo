@@ -1,6 +1,7 @@
 package com.shoppinglist.repository
 
 import com.shoppinglist.database.ListItems
+import com.shoppinglist.database.PushSubscriptions
 import com.shoppinglist.database.ShoppingLists
 import com.shoppinglist.models.ListItem
 import com.shoppinglist.models.ShoppingList
@@ -64,7 +65,9 @@ class ListRepositoryImpl : ListRepository {
     }
     
     override suspend fun deleteList(id: UUID): Boolean = newSuspendedTransaction {
-        // Items will be deleted automatically due to CASCADE constraint
+        // The foreign keys have no ON DELETE CASCADE, so remove dependent rows first
+        ListItems.deleteWhere { ListItems.listId eq id }
+        PushSubscriptions.deleteWhere { PushSubscriptions.listId eq id }
         val deletedRows = ShoppingLists.deleteWhere { ShoppingLists.id eq id }
         deletedRows > 0
     }
