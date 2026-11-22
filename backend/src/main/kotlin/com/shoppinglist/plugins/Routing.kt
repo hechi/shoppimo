@@ -13,7 +13,7 @@ import com.shoppinglist.routes.listRoutes
 import com.shoppinglist.routes.pushRoutes
 import com.shoppinglist.models.HealthResponse
 import com.shoppinglist.models.ErrorResponse
-import io.modelcontextprotocol.kotlin.sdk.server.mcp
+import io.modelcontextprotocol.kotlin.sdk.server.mcpStreamableHttp
 
 import com.shoppinglist.repository.PushSubscriptionRepository
 import com.shoppinglist.services.PushNotificationService
@@ -68,18 +68,15 @@ fun Application.configureRouting(
             // Swagger UI at /api/docs, OpenAPI document generated from the routes above
             openApiDocs()
         }
-
-        // MCP (Model Context Protocol) endpoint for AI assistant integration
-        // Accessible via SSE transport at /mcp
-        // DNS rebinding protection disabled since Shoppimo is designed for LAN access
-        if (enableMcp) {
-            route("/mcp") {
-                mcp(enableDnsRebindingProtection = false) {
-                    // Resolve WebSocket service lazily (set after configureWebSockets runs)
-                    val wsService = call.application.attributes.getOrNull(WebSocketServiceKey)
-                    McpServerConfig.createServer(wsService)
-                }
-            }
+    }
+    // MCP (Model Context Protocol) endpoint for AI assistant integration
+    // Accessible via Streamable HTTP transport at /mcp
+    // DNS rebinding protection disabled since Shoppimo is designed for LAN access
+    if (enableMcp) {
+        mcpStreamableHttp(path = "/mcp", enableDnsRebindingProtection = false) {
+            // Resolve WebSocket service lazily (set after configureWebSockets runs)
+            val wsService = call.application.attributes.getOrNull(WebSocketServiceKey)
+            McpServerConfig.createServer(wsService)
         }
     }
 }

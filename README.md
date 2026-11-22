@@ -142,7 +142,7 @@ For production deployment, see [DEPLOYMENT.md](DEPLOYMENT.md).
 | `GET` | `/api/push/vapid-key` | Get the server's VAPID public key |
 | `POST` | `/api/push/subscribe` | Subscribe to push notifications |
 | `POST` | `/api/push/unsubscribe` | Unsubscribe from push notifications |
-| `SSE` | `/mcp` | Model Context Protocol endpoint (AI integration) |
+| `POST` | `/mcp` | Model Context Protocol endpoint (AI integration) |
 | `GET` | `/api/docs` | Interactive API documentation (Swagger UI) |
 | `GET` | `/api/openapi.json` | OpenAPI specification (JSON) |
 
@@ -158,7 +158,7 @@ OpenAPI cannot describe WebSockets. The protocol for `/ws/{listId}` is documente
 
 ## MCP (Model Context Protocol)
 
-Shoppimo exposes an MCP server at `/mcp` using SSE transport, allowing AI assistants (Claude, Kiro, Copilot, etc.) to manage shopping lists programmatically.
+Shoppimo exposes an MCP server at `/mcp` using the Streamable HTTP transport, allowing AI assistants (Claude, Kiro, Copilot, etc.) to manage shopping lists programmatically.
 
 **Production endpoint:** `https://api.shoppimo.de/mcp`
 
@@ -206,12 +206,16 @@ For other clients, see [MCP_INSTALL.md](MCP_INSTALL.md).
 
 ### Testing with curl
 
-The SSE transport serves both the event stream and the POST endpoint at the same path (`/mcp`):
+The Streamable HTTP transport uses a single endpoint (`/mcp`). Send a JSON-RPC `initialize` request with `POST`:
 
 ```bash
-# Open the SSE stream (responses appear here)
-curl -N -H "Accept: text/event-stream" http://localhost:8080/mcp
+curl -i -X POST http://localhost:8080/mcp \
+  -H "Content-Type: application/json" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"curl","version":"1.0"}}}'
 ```
+
+The response contains an `Mcp-Session-Id` header. Send it with later requests.
 
 For LAN access, use your machine's IP (e.g. `http://192.168.x.x:8080/mcp`).
 

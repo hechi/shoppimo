@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - **Ktor 3.6.1** — The backend framework was upgraded from 3.5.1 to 3.6.1. No change in behavior for users
 - **Kotlin 2.4.21 and backend dependencies** — The backend was upgraded from Kotlin 2.3.21 to 2.4.21, together with the MCP SDK (0.15.0 to 0.16.0), Micrometer (1.17.0 to 1.18.0) and the PostgreSQL driver (42.7.13 to 42.7.14). No change in behavior for users
+- **Major backend dependency upgrades** — Exposed 0.60.0 to 1.6.1, HikariCP 5.1.0 to 7.1.0, Gradle 8.11.1 to 9.9.2, and the test tools Testcontainers 1.21.4 to 2.0.5, JUnit 5.14.4 to 6.1.3 and mockito-kotlin 5.4.0 to 6.4.0. No change in behavior for users
+- **MCP transport** — The MCP endpoint at `/mcp` now uses the Streamable HTTP transport instead of the deprecated SSE transport. The URL stays the same. Clients that connect with `--transport http` (as in [MCP_INSTALL.md](MCP_INSTALL.md)) keep working. Clients that only support the old SSE transport must be updated
 ### Added
 - **OpenAPI specification** — The backend now publishes a machine-readable API description at `/api/openapi.json` and an interactive Swagger UI at `/api/docs`. It covers every REST endpoint with parameters, request and response bodies, and error codes, and it documents the real-time WebSocket protocol, so API clients can be generated or tested without reading the source
 ### Fixed
