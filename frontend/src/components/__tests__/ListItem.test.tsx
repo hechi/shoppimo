@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '../../test/test-utils'
+import { render, screen, waitFor, fireEvent } from '../../test/test-utils'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import ListItem from '../ListItem'
@@ -266,5 +266,42 @@ describe('ListItem', () => {
     
     // Check for loading spinner
     expect(document.querySelector('.animate-spin')).toBeInTheDocument()
+  })
+})
+describe('ListItem swipe removal', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+    delete (document as { startViewTransition?: unknown }).startViewTransition
+  })
+
+  const fullSwipe = (row: HTMLElement) => {
+    fireEvent.touchStart(row, { touches: [{ clientX: 300, clientY: 10 }] })
+    fireEvent.touchMove(row, { touches: [{ clientX: 100, clientY: 10 }] })
+    fireEvent.touchEnd(row)
+  }
+
+  it('removes the row inside a view transition when supported', () => {
+    vi.useFakeTimers()
+    const onDelete = vi.fn()
+    const startViewTransition = vi.fn((update: () => void) => update())
+    ;(document as unknown as { startViewTransition: unknown }).startViewTransition = startViewTransition
+    render(<ListItem item={mockItem} onUpdate={vi.fn()} onDelete={onDelete} onToggle={vi.fn()} />)
+
+    fullSwipe(screen.getByText('Test item').closest('.group') as HTMLElement)
+    vi.advanceTimersByTime(250)
+
+    expect(startViewTransition).toHaveBeenCalledTimes(1)
+    expect(onDelete).toHaveBeenCalledWith('1')
+  })
+
+  it('still removes the row without view transition support', () => {
+    vi.useFakeTimers()
+    const onDelete = vi.fn()
+    render(<ListItem item={mockItem} onUpdate={vi.fn()} onDelete={onDelete} onToggle={vi.fn()} />)
+
+    fullSwipe(screen.getByText('Test item').closest('.group') as HTMLElement)
+    vi.advanceTimersByTime(250)
+
+    expect(onDelete).toHaveBeenCalledWith('1')
   })
 })

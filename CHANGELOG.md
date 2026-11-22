@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Changed
 - **Better phone experience** — The add-item bar and page now respect notches and the home indicator, and fill the real visible screen height when the browser toolbar shows or hides. The checkbox has a larger 44px tap area, long item names wrap instead of being cut off, and the keyboard shows a "Done" key. The browser bar color follows light and dark mode, swiping an item no longer fights with scrolling, and animations are reduced when the device asks for it
+- **Smoother settings menu and item removal** — On phones the settings open as a native bottom sheet that handles Esc, the back gesture and scrolling behind it on its own. On larger screens they open as a popover under the menu button. When you delete an item, the items below glide up into the gap instead of jumping
 
 ## [8.0.1] - 2026-11-22
 ### Fixed

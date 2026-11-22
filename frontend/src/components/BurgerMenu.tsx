@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useState, useRef, useEffect, useId } from 'react';
 import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useI18n } from '../context/I18nContext';
@@ -11,14 +10,33 @@ interface BurgerMenuProps {
   onAliasChanged?: (alias: string | null) => void;
 }
 
+const DESKTOP_QUERY = '(min-width: 768px)';
+
+const useIsDesktop = (): boolean => {
+  const [isDesktop, setIsDesktop] = useState(
+    () => typeof window.matchMedia !== 'function' || window.matchMedia(DESKTOP_QUERY).matches
+  );
+  useEffect(() => {
+    if (typeof window.matchMedia !== 'function') return;
+    const query = window.matchMedia(DESKTOP_QUERY);
+    const update = () => setIsDesktop(query.matches);
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+  return isDesktop;
+};
+
 const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasChanged }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [aliasInput, setAliasInput] = useState(currentAlias || '');
   const [aliasSaving, setAliasSaving] = useState(false);
   const [aliasError, setAliasError] = useState<string | null>(null);
   const [aliasSuccess, setAliasSuccess] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const sheetRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const popoverRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const popoverId = useId();
+  const isDesktop = useIsDesktop();
   const { t } = useI18n();
 
   useEffect(() => {
@@ -56,38 +74,27 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasCh
     }
   };
 
-  // Close on outside click
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleClick = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (!menuRef.current?.contains(target) && !sheetRef.current?.contains(target)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, [isOpen]);
+  // Desktop: place the popover under the settings button (top-layer popovers have no containing block)
+  const handleBeforeToggle = (e: React.ToggleEvent<HTMLDivElement>) => {
+    if (e.newState !== 'open' || !buttonRef.current || !popoverRef.current) return;
+    const rect = buttonRef.current.getBoundingClientRect();
+    popoverRef.current.style.top = `${rect.bottom + 8}px`;
+    popoverRef.current.style.right = `${Math.max(8, window.innerWidth - rect.right)}px`;
+  };
 
-  // Close on Escape
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setIsOpen(false);
-    };
-    document.addEventListener('keydown', handleKey);
-    return () => document.removeEventListener('keydown', handleKey);
-  }, [isOpen]);
+  // Mobile: modal bottom sheet. The browser handles focus, Esc, the back gesture and scroll containment.
+  const openSheet = () => {
+    setIsOpen(true);
+    dialogRef.current?.showModal();
+  };
 
-  // Lock body scroll on mobile when open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+  // Light dismiss for browsers without <dialog closedby>: a click on the backdrop targets the dialog itself
+  const handleDialogClick = (e: React.MouseEvent<HTMLDialogElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const outside =
+      e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom;
+    if (outside) e.currentTarget.close();
+  };
 
   const settingsContent = (
     <>
@@ -154,9 +161,11 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasCh
   );
 
   return (
-    <div ref={menuRef} className="relative" data-testid="burger-menu">
+    <div className="relative" data-testid="burger-menu">
       <button
-        onClick={() => setIsOpen((prev) => !prev)}
+        ref={buttonRef}
+        type="button"
+        {...(isDesktop ? { popoverTarget: popoverId } : { onClick: openSheet })}
         aria-expanded={isOpen}
         aria-label="Settings menu"
         className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
@@ -172,49 +181,40 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasCh
           </svg>
         )}
       </button>
-
-      {/* Desktop dropdown */}
-      {isOpen && (
+      {isDesktop ? (
         <div
-          className="hidden md:block absolute right-0 mt-2 w-auto min-w-[240px] bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3 z-30"
+          ref={popoverRef}
+          id={popoverId}
+          popover="auto"
+          onBeforeToggle={handleBeforeToggle}
+          onToggle={(e) => setIsOpen(e.newState === 'open')}
+          className="fixed inset-auto m-0 w-auto min-w-[240px] bg-white dark:bg-gray-800 text-inherit rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-4 space-y-3"
           data-testid="burger-menu-panel"
         >
-          {settingsContent}
+          {isOpen && settingsContent}
         </div>
-      )}
-
-      {/* Mobile bottom sheet — portaled to escape stacking context */}
-      {isOpen && createPortal(
-        <>
-          <div
-            className="md:hidden fixed inset-0 bg-black/40 z-40"
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-          />
-          <div
-            ref={sheetRef}
-            className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 rounded-t-2xl shadow-2xl animate-slide-up"
-            data-testid="burger-menu-panel"
-          >
-            {/* Drag handle */}
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
-            </div>
-
-            {/* Title */}
-            <div className="px-5 pt-2 pb-4">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                {t('settings.title', {}, 'Settings')}
-              </h2>
-            </div>
-
-            {/* Settings */}
-            <div className="px-5 pb-8 space-y-5">
-              {settingsContent}
-            </div>
+      ) : (
+        <dialog
+          ref={dialogRef}
+          aria-labelledby={`${popoverId}-title`}
+          onClose={() => setIsOpen(false)}
+          onClick={handleDialogClick}
+          className="m-0 mt-auto w-full max-w-full max-h-[90dvh] p-0 bg-white dark:bg-gray-800 text-inherit rounded-t-2xl shadow-2xl backdrop:bg-black/40 open:animate-slide-up"
+          data-testid="burger-menu-panel"
+        >
+          {/* Drag handle */}
+          <div className="flex justify-center pt-3 pb-1">
+            <div className="w-10 h-1 bg-gray-300 dark:bg-gray-600 rounded-full" />
           </div>
-        </>,
-        document.body
+          <div className="px-5 pt-2 pb-4 text-left">
+            <h2 id={`${popoverId}-title`} className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+              {t('settings.title', {}, 'Settings')}
+            </h2>
+          </div>
+          <div className="px-5 pb-[max(2rem,env(safe-area-inset-bottom,0px))] space-y-5 text-left">
+            {isOpen && settingsContent}
+          </div>
+        </dialog>
       )}
     </div>
   );
