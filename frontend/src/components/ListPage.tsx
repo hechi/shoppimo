@@ -172,12 +172,12 @@ const ListPage = () => {
         onDismiss={dismissConflictNotification}
       />
       <div className={`max-w-2xl mx-auto py-4 md:py-8 px-3 md:px-4 ${showStickyStatus ? 'pt-20 sm:pt-20' : 'pt-16 sm:pt-8'}`}>
-        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-3xl shadow-card ring-1 ring-gray-200/70 dark:ring-gray-700/60 overflow-hidden animate-scale-in">
+        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-xs rounded-3xl shadow-card ring-1 ring-gray-200/70 dark:ring-gray-700/60 overflow-hidden animate-scale-in">
           {/* Header */}
-          <div className="p-4 md:p-6 border-b border-gray-200/80 dark:border-gray-700/80 bg-gradient-to-b from-blue-50/40 to-transparent dark:from-blue-950/20">
+          <div className="p-4 md:p-6 border-b border-gray-200/80 dark:border-gray-700/80 bg-linear-to-b from-blue-50/40 to-transparent dark:from-blue-950/20">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 bg-gradient-to-br from-blue-500 dark:from-blue-600 to-blue-700 dark:to-blue-800 rounded-2xl shadow-lift flex items-center justify-center">
+                <div className="w-11 h-11 bg-linear-to-br from-blue-500 dark:from-blue-600 to-blue-700 dark:to-blue-800 rounded-2xl shadow-lift flex items-center justify-center">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
                   </svg>
@@ -271,7 +271,7 @@ const ListPage = () => {
             <div className="space-y-2 mb-6">
               {!state.list || !state.list.items || state.list.items.length === 0 ? (
                 <div className="text-center py-16">
-                  <div className="w-20 h-20 bg-gradient-to-br from-blue-100 dark:from-blue-900 to-blue-200 dark:to-blue-800 rounded-3xl shadow-soft flex items-center justify-center mx-auto mb-6 animate-scale-in">
+                  <div className="w-20 h-20 bg-linear-to-br from-blue-100 dark:from-blue-900 to-blue-200 dark:to-blue-800 rounded-3xl shadow-soft flex items-center justify-center mx-auto mb-6 animate-scale-in">
                     <svg className="w-10 h-10 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
                     </svg>

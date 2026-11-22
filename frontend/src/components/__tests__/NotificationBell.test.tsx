@@ -63,7 +63,7 @@ describe('NotificationBell', () => {
   })
 
   describe('Visual State: Default (not subscribed, permission default/granted)', () => {
-    it('shows outline bell icon when not subscribed and permission is default', () => {
+    it('shows outline-solid bell icon when not subscribed and permission is default', () => {
       mockUseNotifications.mockReturnValue({
         ...defaultMock,
         permissionStatus: 'default',
@@ -77,7 +77,7 @@ describe('NotificationBell', () => {
       expect(button.getAttribute('title')).toContain('Enable notifications')
     })
 
-    it('shows outline bell icon when not subscribed and permission is granted', () => {
+    it('shows outline-solid bell icon when not subscribed and permission is granted', () => {
       mockUseNotifications.mockReturnValue({
         ...defaultMock,
         permissionStatus: 'granted',

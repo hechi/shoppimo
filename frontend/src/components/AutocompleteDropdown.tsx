@@ -88,7 +88,7 @@ const AutocompleteDropdown: React.FC<Props> = ({
       role="listbox"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className={`absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-card max-h-60 overflow-auto dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 outline-none animate-fade-in p-1 ${
+      className={`absolute z-10 w-full bg-white border border-gray-200 rounded-xl shadow-card max-h-60 overflow-auto dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 outline-hidden animate-fade-in p-1 ${
         openAbove ? 'bottom-full mb-2' : 'top-full mt-2'
       }`}
     >

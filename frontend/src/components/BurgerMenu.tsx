@@ -111,7 +111,7 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasCh
                 }}
                 placeholder={t('settings.aliasPlaceholder')}
                 maxLength={64}
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
               />
               <button
                 onClick={handleAliasSave}

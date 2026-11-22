@@ -33,7 +33,7 @@ const ConflictNotification: React.FC<ConflictNotificationProps> = ({
     }`}>
       <div className="bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 shadow-lg max-w-sm">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <svg className="w-5 h-5 text-yellow-600 dark:text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
@@ -51,7 +51,7 @@ const ConflictNotification: React.FC<ConflictNotificationProps> = ({
               setIsVisible(false);
               setTimeout(onDismiss, 300);
             }}
-            className="flex-shrink-0 text-yellow-400 dark:text-yellow-500 hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors"
+            className="shrink-0 text-yellow-400 dark:text-yellow-500 hover:text-yellow-600 dark:hover:text-yellow-500 transition-colors"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

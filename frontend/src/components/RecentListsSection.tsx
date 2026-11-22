@@ -83,7 +83,7 @@ const RecentListsSection: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <div className="ml-3 flex-shrink-0">
+              <div className="ml-3 shrink-0">
                 <svg className="w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform group-hover:translate-x-1 group-hover:text-blue-500 dark:group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
