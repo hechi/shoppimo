@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.0.1] - 2026-11-22
 ### Fixed
 - **MCP connection with current clients** — AI clients that use the latest MCP protocol version (2025-11-25), such as current Kiro releases, could not connect because the server left the negotiated protocol version out of its handshake reply. The server now always sends it. As a side effect, creating a list through the API now also returns an empty `items` array
 
@@ -193,7 +195,8 @@ Re-tagged release of v7.0.0 with no additional changes.
 
 ---
 
-[Unreleased]: https://github.com/hechi/shoppimo/compare/v8.0.0...HEAD
+[Unreleased]: https://github.com/hechi/shoppimo/compare/v8.0.1...HEAD
+[8.0.1]: https://github.com/hechi/shoppimo/compare/v8.0.0...v8.0.1
 [8.0.0]: https://github.com/hechi/shoppimo/compare/v7.3.0...v8.0.0
 [7.3.0]: https://github.com/hechi/shoppimo/compare/v7.2.0...v7.3.0
 [7.2.0]: https://github.com/hechi/shoppimo/compare/v7.1.0...v7.2.0
