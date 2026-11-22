@@ -4,6 +4,7 @@ val logback_version: String by project
 val exposed_version: String by project
 val hikaricp_version: String by project
 val postgresql_version: String by project
+val flyway_version: String by project
 
 plugins {
     kotlin("jvm") version "2.4.21"
@@ -58,6 +59,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
     implementation("com.zaxxer:HikariCP:$hikaricp_version")
     implementation("org.postgresql:postgresql:$postgresql_version")
+    implementation("org.flywaydb:flyway-core:$flyway_version")
+    implementation("org.flywaydb:flyway-database-postgresql:$flyway_version")
 
     // MCP (Model Context Protocol)
     implementation("io.modelcontextprotocol:kotlin-sdk:0.16.0")
