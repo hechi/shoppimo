@@ -4,12 +4,12 @@ import com.shoppinglist.database.ListItems
 import com.shoppinglist.database.ShoppingLists
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.supervisorScope
-import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.selectAll
-import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
-import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.v1.jdbc.Database
+import org.jetbrains.exposed.v1.jdbc.SchemaUtils
+import org.jetbrains.exposed.v1.jdbc.insert
+import org.jetbrains.exposed.v1.jdbc.selectAll
+import com.shoppinglist.database.dbQuery
+import org.jetbrains.exposed.v1.jdbc.transactions.transaction
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -72,7 +72,7 @@ class TransactionTest {
         // Attempt to insert items directly in a transaction that will fail
         try {
             supervisorScope {
-                newSuspendedTransaction(db = database) {
+                dbQuery(db = database) {
                     val now = Instant.now()
                     ListItems.insert {
                         it[id] = UUID.randomUUID()
@@ -109,7 +109,7 @@ class TransactionTest {
         listRepository.createList(listId)
         
         // Create items in a successful transaction
-        newSuspendedTransaction {
+        dbQuery {
             itemRepository.createItem(listId, "Item 1")
             itemRepository.createItem(listId, "Item 2")
             itemRepository.createItem(listId, "Item 3")
@@ -131,7 +131,7 @@ class TransactionTest {
         // Attempt to insert new items in a transaction that will fail
         try {
             supervisorScope {
-                newSuspendedTransaction(db = database) {
+                dbQuery(db = database) {
                     val now = Instant.now()
                     ListItems.insert {
                         it[id] = UUID.randomUUID()
@@ -172,11 +172,11 @@ class TransactionTest {
         val item = itemRepository.createItem(listId, "Test Item")
         
         // Simulate concurrent updates in separate transactions
-        newSuspendedTransaction {
+        dbQuery {
             itemRepository.updateItem(UUID.fromString(item.id), "Updated Text", null)
         }
         
-        newSuspendedTransaction {
+        dbQuery {
             itemRepository.updateItem(UUID.fromString(item.id), null, true)
         }
         

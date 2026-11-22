@@ -1,7 +1,7 @@
 package com.shoppinglist.database
 
-import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.javatime.timestamp
+import org.jetbrains.exposed.v1.core.dao.id.java.UUIDTable
+import org.jetbrains.exposed.v1.javatime.timestamp
 import java.time.Instant
 
 object ShoppingLists : UUIDTable("shopping_lists") {
