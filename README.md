@@ -28,7 +28,7 @@ A real-time collaborative shopping list app. Create a list, share the link, and 
 |-------|-----------|
 | Frontend | React · Vite · TypeScript · TailwindCSS · PWA |
 | Backend | Kotlin · Ktor · Exposed ORM |
-| Database | PostgreSQL |
+| Database | PostgreSQL · Flyway migrations |
 | Infra | Docker · Docker Compose |
 | Monitoring | Prometheus · Grafana · Alertmanager |
 
@@ -76,6 +76,10 @@ cd backend
 ./gradlew run     # API server at http://localhost:8080
 ./gradlew test    # run tests
 ```
+
+#### Database migrations
+
+The schema is managed by [Flyway](https://flywaydb.org/). Migrations are plain SQL files in `backend/src/main/resources/db/migration/` and run automatically when the backend starts. To change the schema, add a new file named `V<next number>__<description>.sql` (for example `V2__add_list_color.sql`). Never edit a migration that has been released. Databases that were created before Flyway was introduced are picked up automatically.
 
 ## Project Structure
 
