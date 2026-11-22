@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- **OpenAPI specification** — The backend now publishes a machine-readable API description at `/api/openapi.json` and an interactive Swagger UI at `/api/docs`. It covers every REST endpoint with parameters, request and response bodies, and error codes, and it documents the real-time WebSocket protocol, so API clients can be generated or tested without reading the source
 
 ## [7.2.0] - 2026-08-23
 
