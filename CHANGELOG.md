@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [8.1.0] - 2026-11-22
 ### Added
 - **Swipe right to check off** — Swiping an item to the right ticks it off (or un-ticks it), so you no longer have to hit the small checkbox in the store
 - **Native share on phones** — The share button opens the phone's own share sheet (Messages, WhatsApp, ...) and falls back to copying the link
@@ -209,7 +211,8 @@ Re-tagged release of v7.0.0 with no additional changes.
 
 ---
 
-[Unreleased]: https://github.com/hechi/shoppimo/compare/v8.0.1...HEAD
+[Unreleased]: https://github.com/hechi/shoppimo/compare/v8.1.0...HEAD
+[8.1.0]: https://github.com/hechi/shoppimo/compare/v8.0.1...v8.1.0
 [8.0.1]: https://github.com/hechi/shoppimo/compare/v8.0.0...v8.0.1
 [8.0.0]: https://github.com/hechi/shoppimo/compare/v7.3.0...v8.0.0
 [7.3.0]: https://github.com/hechi/shoppimo/compare/v7.2.0...v7.3.0
