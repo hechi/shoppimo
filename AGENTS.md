@@ -11,7 +11,7 @@ Shoppimo is a **real-time collaborative shopping list app** — no accounts requ
 
 | Layer | Technology & Version |
 |---|---|
-| Frontend | React 18, TypeScript 5.2, Vite 5, TailwindCSS 3, Vitest 4, Cypress 15 |
+| Frontend | React 19, TypeScript 6.0, Vite 8, TailwindCSS 4, Vitest 5, Cypress 16 (Node.js 24) |
 | Backend | Kotlin (JVM 17), Ktor 2, Exposed ORM, PostgreSQL |
 | Infra | Docker Compose (dev / prod / monitoring stacks) |
 | Monitoring | Prometheus (Micrometer), Grafana, Alertmanager |

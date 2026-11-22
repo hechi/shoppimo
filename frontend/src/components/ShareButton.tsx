@@ -33,7 +33,7 @@ const ShareButton = ({ listId }: ShareButtonProps) => {
       className={`px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-2 ${
         copied 
           ? 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 border border-green-200 dark:border-green-800' 
-          : 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-sm hover:shadow-lift'
+          : 'bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-xs hover:shadow-lift'
       }`}
     >
       {copied ? (

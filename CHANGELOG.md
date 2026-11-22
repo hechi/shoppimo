@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 ### Changed
+- **Frontend dependency upgrades** — React 18 to 19, React Router 6 to 7, i18next 25 to 27 (react-i18next 16 to 18), Vite 5 to 8, Tailwind CSS 3 to 4, TypeScript 5.9 to 6.0, ESLint 8 to 10 (new flat config), Vitest 4 to 5, Cypress 15 to 16, jsdom 27 to 31 and Testing Library jest-dom 6 to 8. The look and behavior of the app stay the same. CI now uses Node.js 24, the version the Docker images already use
 - **Ktor 3.6.1** — The backend framework was upgraded from 3.5.1 to 3.6.1. No change in behavior for users
 - **Kotlin 2.4.21 and backend dependencies** — The backend was upgraded from Kotlin 2.3.21 to 2.4.21, together with the MCP SDK (0.15.0 to 0.16.0), Micrometer (1.17.0 to 1.18.0) and the PostgreSQL driver (42.7.13 to 42.7.14). No change in behavior for users
 - **Major backend dependency upgrades** — Exposed 0.60.0 to 1.6.1, HikariCP 5.1.0 to 7.1.0, Gradle 8.11.1 to 9.9.2, and the test tools Testcontainers 1.21.4 to 2.0.5, JUnit 5.14.4 to 6.1.3 and mockito-kotlin 5.4.0 to 6.4.0. No change in behavior for users

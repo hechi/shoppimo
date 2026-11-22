@@ -65,7 +65,7 @@ const ThemeToggle: React.FC = () => {
       {pillStyle && (
         <span
           aria-hidden="true"
-          className="absolute top-1 h-[calc(100%-0.5rem)] bg-white dark:bg-gray-500 rounded-md shadow-sm transition-all duration-200 ease-in-out"
+          className="absolute top-1 h-[calc(100%-0.5rem)] bg-white dark:bg-gray-500 rounded-md shadow-xs transition-all duration-200 ease-in-out"
           style={{ left: pillStyle.left, width: pillStyle.width }}
         />
       )}
