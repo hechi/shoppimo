@@ -103,3 +103,48 @@ describe('ShareButton', () => {
     expect(copiedButton).toHaveClass('bg-green-100')
   })
 })
+describe('ShareButton native sharing', () => {
+  const originalShare = navigator.share
+
+  afterEach(() => {
+    Object.defineProperty(navigator, 'share', { value: originalShare, configurable: true })
+    vi.restoreAllMocks()
+  })
+
+  const setTouchDevice = (isTouch: boolean) => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: isTouch && query === '(pointer: coarse)',
+      media: query,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+    }))
+  }
+
+  beforeEach(() => {
+    mockUseClipboard.mockReturnValue({ copied: false, copyToClipboard: mockCopyToClipboard })
+    window.location = { origin: 'http://localhost:3000' } as any
+  })
+
+  it('opens the native share sheet on touch devices', async () => {
+    const share = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'share', { value: share, configurable: true })
+    setTouchDevice(true)
+    render(<ShareButton listId="abc" />)
+
+    await userEvent.click(screen.getByRole('button', { name: /share/i }))
+
+    expect(share).toHaveBeenCalledWith(expect.objectContaining({ url: 'http://localhost:3000/list/abc' }))
+    expect(mockCopyToClipboard).not.toHaveBeenCalled()
+  })
+
+  it('copies the link when the share sheet is unavailable', async () => {
+    Object.defineProperty(navigator, 'share', { value: undefined, configurable: true })
+    setTouchDevice(true)
+    mockCopyToClipboard.mockResolvedValue(true)
+    render(<ShareButton listId="abc" />)
+
+    await userEvent.click(screen.getByRole('button', { name: /share/i }))
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('http://localhost:3000/list/abc')
+  })
+})

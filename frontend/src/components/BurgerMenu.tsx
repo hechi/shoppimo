@@ -3,6 +3,7 @@ import ThemeToggle from './ThemeToggle';
 import LanguageSwitcher from './LanguageSwitcher';
 import { useI18n } from '../context/I18nContext';
 import { apiClient } from '../services/api';
+import { useInstallPrompt } from '../hooks/useInstallPrompt';
 
 interface BurgerMenuProps {
   listId?: string;
@@ -37,6 +38,7 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasCh
   const dialogRef = useRef<HTMLDialogElement>(null);
   const popoverId = useId();
   const isDesktop = useIsDesktop();
+  const { canInstall, showIosHint, install } = useInstallPrompt();
   const { t } = useI18n();
 
   useEffect(() => {
@@ -157,6 +159,31 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasCh
         </label>
         <LanguageSwitcher />
       </div>
+      {/* Install section: only when the browser can install the app, or on iOS where it is manual */}
+      {(canInstall || showIosHint) && (
+        <>
+          <div className="border-t border-gray-100 dark:border-gray-700" />
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-2">
+              {t('settings.install')}
+            </label>
+            {canInstall ? (
+              <>
+                <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">{t('settings.installDescription')}</p>
+                <button
+                  type="button"
+                  onClick={install}
+                  className="px-4 py-2 min-h-11 text-sm bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white rounded-lg transition-colors"
+                >
+                  {t('settings.installButton')}
+                </button>
+              </>
+            ) : (
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t('settings.installIos')}</p>
+            )}
+          </div>
+        </>
+      )}
     </>
   );
 
@@ -167,8 +194,8 @@ const BurgerMenu: React.FC<BurgerMenuProps> = ({ listId, currentAlias, onAliasCh
         type="button"
         {...(isDesktop ? { popoverTarget: popoverId } : { onClick: openSheet })}
         aria-expanded={isOpen}
-        aria-label="Settings menu"
-        className="p-2 rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        aria-label={t('settings.menu')}
+        className="p-2 min-h-11 min-w-11 flex items-center justify-center rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
         data-testid="burger-menu-button"
       >
         {isOpen ? (

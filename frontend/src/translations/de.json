@@ -46,7 +46,8 @@
     "listExpiredToday": "Diese Liste läuft heute ab",
     "listExpiresTomorrow": "Diese Liste läuft morgen ab",
     "listExpiresInDays": "Diese Liste läuft in {days} Tagen ab",
-    "characters": "Zeichen"
+    "characters": "Zeichen",
+    "pendingChanges": "{count} Änderungen warten auf Synchronisierung"
   },
   "instructions": {
     "howToUse": "So verwenden Sie es:",
@@ -61,7 +62,8 @@
     "left": "übrig",
     "complete": "vollständig",
     "completedItems": "erledigter Artikel",
-    "completedItemsPlural": "erledigte Artikel"
+    "completedItemsPlural": "erledigte Artikel",
+    "doneSection": "Erledigt"
   },
   "features": {
     "realTimeSync": "Echtzeit-Synchronisation",
@@ -121,6 +123,11 @@
     "aliasInvalid": "Nur Kleinbuchstaben, Zahlen und Bindestriche erlaubt",
     "aliasConflict": "Dieser Alias wird bereits von einer anderen Liste verwendet",
     "aliasSave": "Speichern",
-    "aliasRemove": "Entfernen"
+    "aliasRemove": "Entfernen",
+    "menu": "Einstellungen",
+    "install": "App installieren",
+    "installDescription": "Füge Shoppimo zum Startbildschirm hinzu, um schneller darauf zuzugreifen.",
+    "installButton": "Installieren",
+    "installIos": "Tippe in Safari auf „Teilen“ und dann auf „Zum Home-Bildschirm“."
   }
 }
